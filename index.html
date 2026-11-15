@@ -1,13 +1,59 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="refresh" content="0; url=./Taifa%20Gas%20%26%20Yas_Mixx%20%E2%80%93%20Management%20System%20%E2%80%93%20Version%204.html">
-    <title>Taifa Gas &amp; Yas/Mixx – Management System</title>
-  </head>
-  <body>
-    <p>Opening the management system…</p>
-    <p><a href="./Taifa%20Gas%20%26%20Yas_Mixx%20%E2%80%93%20Management%20System%20%E2%80%93%20Version%204.html">Open it manually</a></p>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102333">
+  <title>Taifa Gas &amp; Yas/Mixx — Cloud Sales</title>
+  <style>
+    :root{font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#14202b;background:#f4f6f8}*{box-sizing:border-box}body{margin:0}header{background:#102333;color:#fff;padding:18px max(16px,calc((100vw - 1000px)/2))}main{max-width:1000px;margin:24px auto;padding:0 16px}.card{background:#fff;border:1px solid #dce3e9;border-radius:12px;padding:18px;margin:14px 0}.row{display:flex;gap:12px;flex-wrap:wrap;align-items:end}label{display:grid;gap:4px;font-size:14px;min-width:180px;flex:1}input,select,button{font:inherit;padding:9px 11px;border:1px solid #cbd5df;border-radius:8px}button{cursor:pointer;background:#14856c;color:#fff;border-color:#14856c}button.secondary{background:#fff;color:#14202b;border-color:#cbd5df}button:disabled{opacity:.55;cursor:wait}.notice{padding:10px 12px;border-radius:8px;background:#eef2f6;color:#415365}.error{background:#fff0f0;color:#9b1c1c}.muted{color:#64748b;font-size:14px}.hidden{display:none!important}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:9px;border-bottom:1px solid #e2e8f0;white-space:nowrap}th{background:#eef2f6}.links{display:flex;gap:12px;flex-wrap:wrap}.links a{color:#126c59}h1{font-size:21px;margin:0}h2{font-size:18px;margin-top:0}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="./frontend/supabase-app.js"></script>
+</head>
+<body>
+  <header><h1>Taifa Gas &amp; Yas/Mixx — Cloud Sales</h1></header>
+  <main>
+    <section class="card" id="login-card">
+      <h2>Sign in</h2>
+      <p class="muted">Use an invited Supabase account. We’ll email a one-time sign-in link.</p>
+      <form id="login-form" class="row">
+        <label>Email address<input id="email" type="email" autocomplete="email" required></label>
+        <button id="login-button" type="submit">Email me a sign-in link</button>
+      </form>
+      <p id="login-message" class="notice hidden" role="status"></p>
+    </section>
+
+    <section id="app" class="hidden">
+      <div class="card row">
+        <div style="flex:2;min-width:240px"><strong id="signed-in-as"></strong><div class="muted" id="role-label"></div></div>
+        <label>Organization<select id="organization"></select></label>
+        <button id="signout" type="button" class="secondary">Sign out</button>
+      </div>
+      <p id="app-message" class="notice" role="status"></p>
+      <section id="sales-entry" class="card hidden">
+        <h2>Record a sale</h2>
+        <p class="muted">The database assigns this sale to your signed-in account. Your role selector or display name cannot change ownership.</p>
+        <form id="sale-form" class="row">
+          <label>Date<input id="sale-date" type="date" required></label>
+          <label>Product<input id="product" maxlength="120" required></label>
+          <label>Quantity<input id="quantity" type="number" min="0.001" step="0.001" required></label>
+          <label>Unit price (TZS)<input id="unit-price" type="number" min="0" step="0.01" required></label>
+          <button id="save-sale" type="submit">Save sale</button>
+        </form>
+      </section>
+      <section class="card">
+        <h2>Cloud sales records</h2>
+        <p class="muted">Row-level security is applied by Supabase. Salespeople receive only their own records; authorized managers can review their organization’s records.</p>
+        <button id="reload" type="button" class="secondary">Refresh records</button>
+        <div class="table-wrap"><table><thead><tr><th>Date</th><th>Product</th><th>Quantity</th><th>Unit price (TZS)</th><th>Total (TZS)</th></tr></thead><tbody id="sales-rows"></tbody></table></div>
+      </section>
+      <section class="card">
+        <h2>Existing management app</h2>
+        <p class="notice">The legacy management app is still browser-local and is not connected to this cloud sales ledger. Its “View as” selector is not authentication. Do not enter sensitive information there.</p>
+        <div class="links"><a href="./Taifa%20Gas%20%26%20Yas_Mixx%20%E2%80%93%20Management%20System%20%E2%80%93%20Version%204.html" target="_blank" rel="noopener">Open legacy app in a new tab</a></div>
+      </section>
+    </section>
+  </main>
+</body>
 </html>

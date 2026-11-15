@@ -1,55 +1,29 @@
 # Backend foundation (Supabase)
 
-This directory starts the backend setup for the static management app. It is **not yet connected to the deployed frontend** and is not live until a Supabase project is configured, migrations are reviewed/applied, users are provisioned, and the app's local-storage reads/writes are replaced with authenticated database calls.
+The repository now has a **connected cloud sales frontend** at the GitHub Pages root, but the complete legacy management system is not yet migrated. The legacy HTML app still uses browser local storage. Do not enter sensitive operational, accounting, HR, or personal data in that legacy app expecting cloud sync or security.
 
-## Why Supabase
+## Supabase setup
 
-Supabase provides managed PostgreSQL, authentication, and row-level security (RLS). The current app is a static HTML page that saves records in each browser's local storage. Its “View as” selector is only a UI filter, not sign-in or authorization. Server-managed memberships and database RLS are required for real access control.
-
-## Setup checklist
-
-1. Create a Supabase project in an account you control and choose an appropriate data region.
-2. In the Supabase SQL Editor, review and apply migrations in order:
+1. In Supabase, apply the migrations in order from **SQL Editor**:
    - `supabase/migrations/202611150001_initial_schema.sql`
    - `supabase/migrations/202611150002_sales_person_rls.sql`
-3. Create an organization row, then invite users through Supabase Auth. Assign each user a membership using the SQL Editor or another trusted admin-only process. Never let the browser create or change its own role.
-4. Review the role/domain matrix in `has_domain_access` against actual job responsibilities and privacy requirements before adding real data.
-5. Integrate Supabase Auth and database calls into the frontend. Use only the project's public/publishable key in browser code; **never** place a service-role key or database password in this repository or frontend.
-6. Store individual sales in `public.sales_records`, setting `salesperson_user_id` to the authenticated user's UUID (`auth.uid()` in trusted SQL / server context), not a display name or a client-selected role. Test with two salesperson accounts and verify each sees only its own rows. Also test manager access, cross-organization access, and attempts to forge another seller's ID.
-7. Do not use the generic `app_records` table for salesperson-accessible sales: the generic table is intentionally not granted to `rsp`/`ssp`, and its JSON payload cannot enforce per-sale ownership.
+2. In **Authentication → URL Configuration**, add the deployed GitHub Pages root URL to the allowed redirect URLs, for example `https://mzeekijana-ux.github.io/DREAMS-MANAGEMENT-SYSTEM-1/`. If using another repository/site URL, enter that exact URL instead.
+3. Invite existing users in **Authentication → Users**. The frontend requests a magic link for an existing account (it does not create accounts).
+4. Provision each person with one active row in `public.memberships` for the organization's UUID and their Auth user UUID. The role must be server-managed; never rely on the client “View as” selector.
+5. Set the intended SMTP/email provider in Supabase Auth and test delivery. The browser app uses the project's public/publishable key; no service-role key or database password belongs in this repo.
+6. Open the deployed site root, request a sign-in link, and test with at least two salesperson users. Confirm each only sees their own cloud sales and cannot forge another `salesperson_user_id`. Test manager access separately.
 
-## Sales-person RLS behavior
+## Connected functionality
 
-The second migration enables RLS on `public.sales_records` and adds these policies:
+- Root `index.html` uses Supabase Auth magic-link sign-in.
+- `frontend/supabase-app.js` loads the signed-in user's active organization memberships and displays the server-provided role.
+- Salespeople can create their own cloud sales in `public.sales_records`; ownership is the authenticated Supabase user UUID.
+- The frontend reads the dedicated `sales_records` table. Supabase RLS is the security boundary and remains authoritative even if a browser request is altered.
+- Only the public/publishable key is included in client code. It is expected to be public; data access is protected by RLS.
 
-- Active `rsp` and `ssp` members can select only rows whose `salesperson_user_id` is their own authenticated user ID.
-- Salespeople may insert rows only for themselves; they cannot update or delete rows.
-- Roles that already have sales-domain read/write access may review or manage rows for members in their organization.
-- A composite foreign key ensures each record's salesperson is a member of that same organization.
+## Important limits
 
-The `ssp` role in the earlier generic domain-access helper remains without access to `app_records`. Sales-person access is deliberately limited to the dedicated sales table until other records get equivalent ownership-level policies. The role code alone is not sufficient: the person must be invited to Supabase Auth and have an active organization membership.
-
-## Current authorization assumptions
-
-| Role | Intended access in starter policies |
-| --- | --- |
-| MD / Board (`md`) | All listed domains |
-| Group Finance Manager (`gfm`) | All except HR |
-| Internal Auditor (`ia`) | Read-only, all except HR |
-| Treasury Controller (`trc`) | Treasury, accounting and operational review domains; limited writes |
-| Regional Gas Manager (`rgm`) | Gas, sales, inventory, daily reports; limited writes |
-| Yas/Mixx Manager (`ymm`) | Yas/Mixx, float, sales, daily reports; limited writes |
-| Wakala Development Manager (`wdm`) | Yas/Mixx and float review; limited writes |
-| Accountant (`acc`) | Accounting and related review domains; limited writes |
-| HR Manager (`hr`) | HR only |
-| Procurement Officer (`po`) | Inventory and gas stock review; limited writes |
-| Route/Shop Sales Person (`rsp`, `ssp`) | Own rows in `sales_records` only; no generic `app_records` access |
-
-These are provisional least-privilege defaults, not a final business approval. `app_records` stores one JSON record per domain; do not store the complete app state as one shared JSON blob, because that would defeat domain-level privacy.
-
-## Not done yet
-
-- This is schema and policy work, not a finished production backend.
-- There is no Supabase project configuration, login UI, invite flow, frontend synchronization, migration of browser-local records, or deployment automation in this repository yet.
-- Existing browser data remains in that browser. It is not automatically transferred or backed up by this scaffold.
-- Before production, add automated RLS tests, audit logging/retention policy, backups, and a reviewed recovery process. Review the full role/domain matrix with the organization before entering sensitive data.
+- The original management app opened from the root previously; it is now linked from the cloud portal as a legacy, browser-local app. It is not authenticated by this portal if opened directly and is not synchronized to Supabase.
+- Cloud sales records are separate from the legacy app's local sales. Existing local records are not automatically migrated.
+- The current frontend permits active `rsp` and `ssp` accounts to submit their own sales. Managers with RLS read permission can view the organization's sale records. The frontend does not yet include manager entry/edit forms, stock synchronization, or integration of the legacy sales forms.
+- Review role/domain permissions, test every RLS policy, configure production email and redirects, and verify database backups before using real business information.
