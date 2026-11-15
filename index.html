@@ -1,86 +1,13 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Taifa Gas &amp; Yas/Mixx – Management System – Version 4</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔥%3C/text%3E%3C/svg%3E">
-<style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f6f8;--card:#fff;--ink:#14202b;--mut:#64748b;--line:#e2e8f0;--hd:#eef2f6;[...]
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0b1219;--card:#131d27;--ink:#e6edf3;--mut:#93a4b5;--line:#243342;--hd:#1a2733;--side:#08121a;--acc:#2dd4a0;[...]
-:root[data-theme="dark"]{color-scheme:dark;--bg:#0b1219;--card:#131d27;--ink:#e6edf3;--mut:#93a4b5;--line:#243342;--hd:#1a2733;--side:#08121a;--acc:#2dd4a0;--bad:#fb7185;--warn:#fbbf24}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-header{background:var(--side);color:#fff;padding:12px 16px}header h1{margin:0;font-size:17px}header small{color:#9bb7cc}
-.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
-nav{display:flex;gap:6px;flex-wrap:wrap;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-nav button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
-main{padding:16px;max-width:1200px;margin:auto}
-input,select,button,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 9px}
-header select,header input{background:#17405c;color:#fff;border-color:#2b5d7c}
-button{cursor:pointer}button.p{background:var(--acc);color:#fff;border-color:var(--acc)}button.s{padding:3px 8px;font-size:12px}button.d{color:var(--bad)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px}.grid .card{margin:0}
-.k{font-size:12px;color:var(--mut)}.v{font-size:22px;font-weight:650}.note{font-size:12px;color:var(--mut)}h3{margin:0 0 8px;font-size:15px}
-.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:6px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--hd);wh[...]
-.tag{display:inline-block;padding:1px 8px;border-radius:99px;font-size:12px;background:var(--hd)}.g{color:var(--acc)}.r{color:var(--bad)}.o{color:var(--warn)}
-.f{font-size:12px;background:var(--hd);border-radius:8px;padding:8px 10px;margin-bottom:12px;color:var(--mut)}
-#modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:50;padding:12px}
-#modal>div{background:var(--card);border-radius:14px;padding:16px;width:min(440px,100%);max-height:90vh;overflow:auto}
-#modal label{display:block;margin:8px 0 2px;font-size:12px;color:var(--mut)}#modal input,#modal select,#modal textarea{width:100%}
-.bd{height:8px;border-radius:99px;background:var(--hd);overflow:hidden;min-width:60px}.bd i{display:block;height:100%;background:var(--acc)}
-@media print{header,nav,.noprint,button,#modal,.sbt{display:none!important}body{background:#fff;color:#000}.card{border:0}}.sbt{margin-bottom:10px}
-</style></head><body>
-<header><h1>Taifa Gas &amp; Yas/Mixx – Management System<span style="font-size:12px;font-weight:600;background:rgba(255,255,255,.22);padding:2px 9px;border-radius:10px;margin-left:10px;vertical-[...]
-<div class="bar"><label>Unit <select id="un"><option value="all">All units</option><option value="g">Taifa Gas</option><option value="y">Yas &amp; Mixx</option></select></label>
-<label>View as <select id="me"></select></label><label>As at <input type="date" id="as"></label><button class="s" id="th">Theme</button> <button class="s" id="lg">Kiswahili</button></div></header>
-<nav id="nav"></nav><main id="main"></main><div id="modal"></div>
-<script>
-const K='gym_v1',fmt=n=>Math.round(+n||0).toLocaleString('en-US'),esc=s=>String(s==null?'':s).replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const R={md:'MD / Board',gfm:'Group Finance Manager',trc:'Treasury Controller',rgm:'Regional Gas Manager',ymm:'Yas/Mixx Manager',wdm:'Wakala Development Manager',ia:'Internal Auditor'};
-const L=[
-{id:'gas',un:'g',n:'Taifa Gas – Tabora',tg:'8 district offices; 6,000 cylinders/month',u:'cylinders',t:6000,o:'rgm',ty:'Sales volume (net of returns)',f:'Sales, stock, delivery and cash reconcil[...]
-{id:'yas',un:'y',n:'Yas & Mixx – Tabora',tg:'4 service desks + 8 district float offices; TZS 9,505,000,000 monthly turnover',u:'TZS turnover',t:9505e6,o:'ymm',ty:'Transaction turnover – NOT re[...]
-{id:'wak',un:'y',n:'Yas/Mixx Wakala portfolio',tg:'1,720 active Wakala',u:'active Wakala',t:1720,o:'wdm',ty:'Count',f:'Confirm active status, transaction activity and outlet-level performance.'},
-{id:'pri',un:'y',n:'Priority Wakala recovery',tg:'324 unserved / priority Wakala',u:'Wakala served',t:324,o:'wdm',ty:'Count (not added to the 1,720 until verified)',f:'Track contact, reactivation,[...]
-{id:'rec',un:'y',n:'New Wakala recruitment',tg:'215 new registrations / recruitments',u:'recruits',t:215,o:'wdm',ty:'Count by stage: application → approval → activation → first transaction',[...]
-const ACT0=[['Complete bank, cash, mobile-money and float reconciliations','trc','2026-11-13','b'],['Submit district-level gas sales, stock and cash reports','rgm','2026-11-14','g'],['Submit Yas/M[...]
-const MIS=[['Signed monthly management accounts – Taifa Gas and Yas/Mixx',['gfm'],'b'],['Bank, cash, mobile-money and float reconciliations with supporting statements',['trc'],'b'],['Taifa Gas d[...]
-const RSK=[['Cash, float and settlement','Shortages, delayed settlement, unauthorised transfers or misstated turnover.','Daily independent reconciliation; maker-checker; approved limits; exception[...]
-const DEFS=[['Sales volume','Quantity sold to customers, net of properly recorded returns.'],['Transaction turnover','Value processed through a channel; not automatically revenue or profit.'],['Co[...]
-let S={asat:'2026-11-13',act:{},plan:{},mis:{},risk:{},ret:[],tgt:{},acts:[]},ME='md',UN='all',PG='dash';
-try{Object.assign(S,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){}
-const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
-const $=s=>document.querySelector(s),vis=u=>UN=='all'||u=='b'||u==UN,ACT=()=>ACT0.concat(S.acts||[]);
-const isM=()=>ME=='md'||ME=='gfm',can=o=>isM()||[].concat(o).includes(ME),dd=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
-const tgt=l=>S.tgt[l.id]!=null&&S.tgt[l.id]!==''?+S.tgt[l.id]:l.t,kpi=(k,v,s)=>`<div class="card"><div class="k">${k}</div><div class="v">${v}</div><div class="note">${s||''}</div></div>`;
-const tbl=(h,r)=>`<div class="tw"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${r.map(x=>`<tr>${x.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${h.length}" class="note">Nothing here yet.</td></tr>`}</table></div>`;
-function form(title,fs,cb,ok){const m=$('#modal');m.innerHTML=`<div><h3>${title}</h3>${fs.map(f=>`<label>${f.l||''}</label>`+(f.t=='select'?`<select id="f_${f.k}">${f.o.map(o=>`<option value="${esc(Array.isArray(o)?o[0]:o)}" ${f.v=== (Array.isArray(o)?o[0]:o)?'selected':''}>${esc(Array.isArray(o)?o[1]:o)}</option>`).join('')}</select>`:f.t=='textarea'?`<textarea id="f_${f.k}">${esc(f.v||'')}</textarea>`:f.t=='html'?f.h:`<input id="f_${f.k}" type="${f.t||'text'}" value="${esc(f.v||'')}" ${f.min!=null?`min="${esc(f.min)}"`:''} ${f.step!=null?`step="${esc(f.step)}"`:''} ${f.max!=null?`max="${esc(f.max)}"`:''}>`)).join('')}${ok?`<p id="fe" class="note"></p>`:''}<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button id="fc" type="button">Cancel</button><button class="p" id="fo" type="button">Save</button></div></div>`;$('#fc').onclick=()=>m.style.display='none';$('#fo').onclick=()=>{const v={};fs.forEach(f=>{const e=$('#f_'+f.k);if(e)v[f.k]=f.t=='check'?e.checked:e.value});const er=cb(v);if(er)return $('#fe').textContent=er;save();m.style.display='none';render()}};m.style.display='flex';}
-$('#fc').onclick=()=>m.style.display='none';$('#fo').onclick=()=>{const v={};fs.forEach(f=>{const e=$('#f_'+f.k);if(e)v[f.k]=f.t=='check'?e.checked:e.value});const er=cb(v);if(er)return $('#fe').textContent=er;save();m.style.display='none';render()}}
-function actForm(id){const l=L.find(x=>x.id==id),a=S.act[id]||{};form('Actual – '+esc(l.n),[{t:'html',h:`<p class="note">Enter only figures supported by source records. Target: ${esc(l.tg)}</p>`},{k:'v',l:'Actual value ('+l.u+')',t:'number',v:a.v}],v=>{S.act[id]=v;save();render()})}
-function tgtForm(id){const l=L.find(x=>x.id==id);form('Monthly target – '+esc(l.n),[{k:'v',l:'Target per month ('+l.u+')',t:'number',v:tgt(l)}],v=>{S.tgt[id]=v.v})}
-function retForm(){const ls=L.filter(l=>vis(l.un)&&can(l.o));if(!ls.length)return alert('Your role cannot enter returns for the selected unit.');form('Daily return',[{k:'d',l:'Date',t:'date',v:S.asat},{k:'l',l:'Line',t:'select',o:ls.map(l=>[l.id,l.n]),v:ls[0].id},{k:'v',l:'Value',t:'number',v:''},{k:'n',l:'Note',v:''}],v=>{if(!v.d||v.v===''||v.v==null)return 'Date, line and value required';S.ret.push({d:v.d,l:v.l,v:+v.v,n:v.n||''});save();render()})}
-function actEdit(i){const a=ACT()[i],p=S.plan[i]||{st:'Open'},ver=isM()||ME=='ia';form('Update action '+(i+1),[{t:'html',h:`<p>${esc(a[0])}</p>`},{k:'st',l:'Status',t:'select',o:['Open','In progress','Submitted','Verified','Closed'],v:p.st},{k:'by',l:'Owner',v:a[1]},{k:'dd',l:'Deadline',t:'date',v:a[2]},{k:'n',l:'Note',v:p.n||''}],v=>{S.plan[i]={st:v.st,n:v.n||''};save();render()})}
-function actNew(){form('Add action',[{k:'t',l:'Action'},{k:'o',l:'Owner',t:'select',o:Object.entries(R)},{k:'u',l:'Unit',t:'select',o:[['g','Taifa Gas'],['y','Yas & Mixx'],['b','Both']]},{k:'d',l:'Deadline',t:'date',v:S.asat}],v=>{ACT0.push([v.t,v.o,v.d,v.u]);save();render()})}
-function riskForm(i){const r=S.risk[i]||{rate:'Not assessed',ctl:'Not evidenced'};form('Risk – '+RSK[i][0],[{k:'rate',l:'Residual risk rating',t:'select',o:['Not assessed','Low','Medium','High'],v:r.rate},{k:'ctl',l:'Control evidence',v:r.ctl}],v=>{S.risk[i]=v;save();render()})}
-const flag=i=>{const s=(S.plan[i]||{st:'Open'}).st;if(s=='Submitted'||s=='Verified')return[s,'g',0];const d=dd(S.asat,ACT()[i][2]);return d<0?['Overdue '+(-d)+'d','r',3]:d<=3?['Due in '+d+'d','o',2]:['On track','g',0]};
-const mm=()=>S.asat.slice(0,7),mtd=id=>S.ret.filter(x=>x.l==id&&x.d.slice(0,7)==mm()).reduce((q,x)=>q+x.v,0);
-function cell(l){const a=S.act[l.id],t=tgt(l);if(!a)return['Not provided / unverified','o','—'];const v=a.v!==''&&a.v!=null?fmt(a.v)+' '+l.u:'Entered';return a.ver&&t&&a.v!==''?[v,'g',(a.v/t*100).toFixed(1)+'%']:[v,'o','—']}
-const P={
-dash(){const ls=L.filter(l=>vis(l.un)),ac=ACT().map((a,i)=>i).filter(i=>vis(ACT()[i][3])),fl=ac.map(flag),od=ac.filter((i,j)=>fl[j][2]==3),ms=MIS.map((x,i)=>i).filter(i=>vis(MIS[i][2])),ds=ms.filter(i=>S.mis[mm()]&&S.mis[mm()][i]),rs=RSK.map((x,i)=>i).filter(i=>vis(RSK[i][4]));return `<div class="f">PRELIMINARY – actual performance is unverified until source records are submitted and reviewed. Targets are management targets.</div><div class="grid">${kpi('Lines with verified actuals',ls.filter(l=>S.act[l.id]&&S.act[l.id].ver).length+' / '+ls.length,'')+kpi('Actions overdue',od.length,'')+kpi('Risk controls evidenced',rs.filter(i=>S.risk[i]&&S.risk[i].ctl&&S.risk[i].ctl!=='Not evidenced').length+' / '+rs.length,'')+kpi('Month-end MI submitted',ds.length+' / '+ms.length,'')}</div><div class="card"><h3>Business-line status</h3>${tbl(['Business line','Owner','Target','Actual','Achievement',''],ls.map(l=>{const c=cell(l),v=C=...}))}</div>`;},
-score(){const ls=L.filter(l=>vis(l.un));return `<div class="card"><h3>Business-line scorecard</h3>${tbl(['Business line','Target','Actual','Achievement'],ls.map(l=>{const a=S.act[l.id];const t=tgt(l);const ach=a&&a.v&&t?Math.round(a.v/t*100):0;return [l.n,fmt(t)+' '+l.u,(a&&a.v!=null?fmt(a.v)+' '+l.u:'—'),ach?ach+'%':'—']}))}</div>`;},
-ret(){const r=S.ret.map((x,i)=>[x,i]).filter(([x])=>vis(L.find(l=>l.id==x.l).un)).reverse().slice(0,200);return `<div class="sbt"><button class="p" onclick="retForm()">+ Daily return</button></div>${tbl(['Date','Line','Value','Note'],r.map(([x])=>[x.d,L.find(l=>l.id==x.l).n,fmt(x.v),x.n]))}`;},
-plan(){const ac=ACT().map((a,i)=>i).filter(i=>vis(ACT()[i][3]));return `<div class="sbt"><button class="p" onclick="actNew()">+ Add action</button></div><div class="card"><h3>Management action plan</h3>${tbl(['Action','Owner','Deadline','Status','Note'],ac.map(i=>{const a=ACT()[i];return [a[0],R[a[1]]||a[1],a[2],(S.plan[i]||{st:'Open'}).st,(S.plan[i]||{n:''}).n]}))}</div>`;},
-mis(){const m=mm(),o=(S.mis[m]=S.mis[m]||{}),ms=MIS.map((x,i)=>i).filter(i=>vis(MIS[i][2]));return `<div class="grid">${kpi('Submitted',ms.filter(i=>o[i]).length+' / '+ms.length,'')+kpi('Outstanding',ms.filter(i=>!o[i]).length,'')}</div><div class="card"><h3>Monthly MI Pack</h3>${tbl(['Report','Owner','Status'],MIS.filter((x,i)=>vis(x[2])).map((x,i)=>[x[0],R[x[1]]||x[1],o[i]?'Submitted':'Outstanding']))}</div>`;},
-risk(){const rs=RSK.map((x,i)=>i).filter(i=>vis(RSK[i][4]));return `<div class="card"><h3>Priority risk and internal-control register</h3>${tbl(['Risk','Control','Status'],rs.map(i=>[RSK[i][0],RSK[i][2],(S.risk[i]||{rate:'Not assessed'}).rate]))}</div>`;},
-bak(){return `<div class="card"><h3>Backup</h3><p class="note">Entries are saved in this browser only. Export a copy regularly and import it on another device.</p><button onclick="exp()">Export data</button> <input type="file" onchange="imp(this)" accept=".json" /></div>`;}
-};
-function exp(){const a=document.createElement('a');a.href='data:application/json,'+encodeURIComponent(JSON.stringify(S));a.download='gas_yasmixx_data_'+S.asat+'.json';document.body.appendChild(a);a.click();a.remove();}
-function imp(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{S=Object.assign(S,JSON.parse(r.result));save();render()}catch(e){alert('Not a valid data file')}};r.readAsText(f);} 
-function rst(){if(prompt('This erases every record. Type ERASE to confirm.')=='ERASE'){localStorage.removeItem(K);location.reload()}}
-const TABS=[['dash','Dashboard'],['score','Scorecard'],['ret','Daily Returns'],['plan','Action Plan'],['mis','Monthly MI Pack'],['risk','Risk Register'],['bak','Backup']];
-function render(){$('#nav').innerHTML=TABS.map(t=>`<button class="${PG==t[0]?'on':''}" onclick="PG='${t[0]}';render()">${t[1]}</button>`).join('');$('#main').innerHTML=P[PG]()}
-$('#me').innerHTML=Object.entries(R).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
-$('#me').onchange=e=>{ME=e.target.value;render()};$('#un').onchange=e=>{UN=e.target.value;render()};
-$('#as').value=S.asat;$('#as').onchange=e=>{S.asat=e.target.value||S.asat;save();render()};
-$('#th').onclick=()=>{const d=document.documentElement,dk=d.dataset.theme?d.dataset.theme=='dark':matchMedia('(prefers-color-scheme:dark)').matches;d.dataset.theme=dk?'light':'dark'};
-render();
-</script>
-</body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="refresh" content="0; url=./Taifa%20Gas%20%26%20Yas_Mixx%20%E2%80%93%20Management%20System%20%E2%80%93%20Version%204.html">
+    <title>Taifa Gas &amp; Yas/Mixx – Management System</title>
+  </head>
+  <body>
+    <p>Opening the management system…</p>
+    <p><a href="./Taifa%20Gas%20%26%20Yas_Mixx%20%E2%80%93%20Management%20System%20%E2%80%93%20Version%204.html">Open it manually</a></p>
+  </body>
+</html>
