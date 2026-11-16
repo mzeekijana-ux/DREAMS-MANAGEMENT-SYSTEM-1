@@ -839,6 +839,20 @@ function exp(){S.ver=4;const a=document.createElement('a');a.href='data:applicat
 S.ver=4;
 /* seed: one Route and one Shop sales person per district (editable placeholders) */
 DC.forEach(d=>['r','s'].forEach(t=>{if(!S.spu.some(x=>x.dc==d&&x.ty==t))S.spu.push({id:'U-'+nz(d)+t,n:(t=='r'?'Route Sales – ':'Shop Sales – ')+d,ty:t,u:'g',dc:d,ph:''})}));save();
+/* ===== Opening stock: single entry + bulk upload =====
+   Stored as ordinary stock movements in S.inv (type "Opening balance"), so balances, Main Stores,
+   reports and the sync to Supabase app_records (domain "inventory") all work unchanged. */
+const OPN='Opening balance',
+osCan=()=>isM()||ME=='rgm'||ME=='po',
+osOk=p=>isM()||((ME=='rgm'||ME=='po')&&p.u=='g'),
+osLoc=s=>ALL.find(d=>nz(d)==nz(s)),
+osChk=(d,dc,p,q)=>{if(!osCan())return 'Your role cannot enter opening stock (allowed: MD, GFM, Regional Gas Manager, Procurement Officer)';if(!p)return 'product not found – add it first';if(!osOk(p))return 'not permitted for this unit';if(!dc)return 'location not recognised (a district, Tabora Main Store or Nzega Sub Store)';if(!dtOk(d))return 'date must be YYYY-MM-DD';if(!Number.isInteger(q)||q<=0)return 'quantity must be a whole number above zero';if(S.inv.some(m=>m.ty==OPN&&m.dc==dc&&m.p==p.id&&m.st=='ok'))return 'opening stock already recorded for this product at '+dc+' – correct it with a Count adjustment';return ''},
+osMk=(d,dc,p,q,ref)=>({id:bid('M'),d,dc,p:p.id,ty:OPN,q,ref:ref||'Opening stock',st:'ok',by:ME,ms:MS.includes(dc)?1:0});
+function osForm(){const ps=S.prod.filter(p=>vis(p.u)&&osOk(p));if(!osCan())return alert('Your role cannot enter opening stock.');if(!ps.length)return alert('Add a product first, or your role cannot manage stock for this unit.');form('Opening stock',[{t:'html',h:'<p class="note">Use the date the stock was counted, normally the day before you start recording movements. Enter each product once per location; later corrections go through a Count adjustment.</p>'},{k:'d',l:'Opening date',t:'date',v:S.asat},{k:'dc',l:'Store / distribution centre',t:'select',o:ALL.map(x=>[x,x])},{k:'p',l:'Product',t:'select',o:ps.map(p=>[p.id,pl(p)])},{k:'q',l:'Opening quantity (whole units)',t:'number'}],v=>{const p=pr(v.p),q=+v.q,e=osChk(v.d,v.dc,S.prod.find(x=>x.id==v.p),q);if(e)return e[0].toUpperCase()+e.slice(1);S.inv.push(osMk(v.d,v.dc,p,q,'Opening stock'))},'Post opening stock')}
+BK.opn={n:'Opening stock',h:['date','centre','product','qty'],x:['2026-11-01','Tabora Main Store','LPG cylinder',150],add:r=>{const p=S.prod.find(x=>nz(x.n+x.sz)==nz(r.product))||S.prod.find(x=>nz(x.n)==nz(r.product)),dc=osLoc(r.centre),q=num(r.qty),e=osChk(r.date,dc,p,q);if(e)return e;S.inv.push(osMk(r.date,dc,p,q,'Opening stock (bulk)'))}};
+const osBar=()=>osCan()?'<div class="sbt noprint"><button class="p" onclick="osForm()">+ Opening stock</button> <button onclick="BS.t=\'opn\';PG=\'bulk\';render()">Bulk upload opening stock</button></div>':'';
+['inv','mst','ctl'].forEach(k=>{const f=P[k];P[k]=function(){return osBar()+f.apply(P,arguments)}});
+
 /* shell */
 TABS.splice(1,0,['sales','Sales'],['team','Sales Team']);TR.team=NZ;
 $('.bar').insertAdjacentHTML('beforeend','<label id="spw" style="display:none">Sales person <select id="sp"></select></label>');$('#sp').onchange=e=>{SPID=e.target.value;render()};
