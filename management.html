@@ -1,0 +1,925 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Taifa Gas &amp; Yas/Mixx – Management System – Version 4</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔥%3C/text%3E%3C/svg%3E">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f6f8;--card:#fff;--ink:#14202b;--mut:#64748b;--line:#e2e8f0;--hd:#eef2f6;--side:#0f2a3d;--acc:#0b7a5a;--bad:#e11d48;--warn:#b45309}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0b1219;--card:#131d27;--ink:#e6edf3;--mut:#93a4b5;--line:#243342;--hd:#1a2733;--side:#08121a;--acc:#2dd4a0;--bad:#fb7185;--warn:#fbbf24}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0b1219;--card:#131d27;--ink:#e6edf3;--mut:#93a4b5;--line:#243342;--hd:#1a2733;--side:#08121a;--acc:#2dd4a0;--bad:#fb7185;--warn:#fbbf24}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{background:var(--side);color:#fff;padding:12px 16px}header h1{margin:0;font-size:17px}header small{color:#9bb7cc}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+nav{display:flex;gap:6px;flex-wrap:wrap;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+main{padding:16px;max-width:1200px;margin:auto}
+input,select,button,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 9px}
+header select,header input{background:#17405c;color:#fff;border-color:#2b5d7c}
+button{cursor:pointer}button.p{background:var(--acc);color:#fff;border-color:var(--acc)}button.s{padding:3px 8px;font-size:12px}button.d{color:var(--bad)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px}.grid .card{margin:0}
+.k{font-size:12px;color:var(--mut)}.v{font-size:22px;font-weight:650}.note{font-size:12px;color:var(--mut)}h3{margin:0 0 8px;font-size:15px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:6px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--hd);white-space:nowrap}td.w{white-space:normal;min-width:200px}
+.tag{display:inline-block;padding:1px 8px;border-radius:99px;font-size:12px;background:var(--hd)}.g{color:var(--acc)}.r{color:var(--bad)}.o{color:var(--warn)}
+.f{font-size:12px;background:var(--hd);border-radius:8px;padding:8px 10px;margin-bottom:12px;color:var(--mut)}
+#modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:50;padding:12px}
+#modal>div{background:var(--card);border-radius:14px;padding:16px;width:min(440px,100%);max-height:90vh;overflow:auto}
+#modal label{display:block;margin:8px 0 2px;font-size:12px;color:var(--mut)}#modal input,#modal select,#modal textarea{width:100%}
+.bd{height:8px;border-radius:99px;background:var(--hd);overflow:hidden;min-width:60px}.bd i{display:block;height:100%;background:var(--acc)}
+@media print{header,nav,.noprint,button,#modal,.sbt{display:none!important}body{background:#fff;color:#000}.card{border:0}}.sbt{margin-bottom:10px}
+</style><style>
+#gate{position:fixed;inset:0;background:var(--side);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
+#gbox{background:var(--card);color:var(--ink);border-radius:14px;padding:22px;width:min(420px,100%)}
+#gbox h2{margin:0 0 4px}#gbox label{display:block;margin:10px 0 3px;font-size:12px;color:var(--mut)}#gbox input{width:100%}
+#gbox button{margin-top:14px;width:100%;padding:9px}.gs{font-size:12px;color:var(--mut);margin:6px 0 0}
+#tgToast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#14202b;color:#fff;padding:10px 14px;border-radius:10px;font-size:13px;max-width:92vw;z-index:120;display:none;box-shadow:0 4px 18px #0006}
+</style></head><body>
+<header><h1>Taifa Gas &amp; Yas/Mixx – Management System<span style="font-size:12px;font-weight:600;background:rgba(255,255,255,.22);padding:2px 9px;border-radius:10px;margin-left:10px;vertical-align:middle">Version 4</span></h1><small>Tabora · Separate system for the Gas and Yas/Mixx business units</small>
+<div class="bar"><label>Unit <select id="un"><option value="all">All units</option><option value="g">Taifa Gas</option><option value="y">Yas &amp; Mixx</option></select></label>
+<label>View as <select id="me"></select></label><label>As at <input type="date" id="as"></label><button class="s" id="th">Theme</button> <button class="s" id="lg">Kiswahili</button></div></header>
+<nav id="nav"></nav><main id="main"></main><div id="modal"></div>
+<div id="gate"><div id="gbox"><h2>Loading…</h2></div></div>
+<script>/* Taifa management app on Supabase: sign-in (email link), role from memberships, sync to public.app_records. */
+(function () {
+  'use strict';
+  const SB = window.__SB_URL || 'https://ovijbsmxpkpwztfnkiga.supabase.co';
+  const KEY = 'sb_publishable_mMeqGX0mGvDi9T9VpDxuvQ_vfTB2xdQ';   // publishable key: safe to be public; data is protected by row-level security
+  const SKEY = 'sb-ovijbsmxpkpwztfnkiga-auth-token';             // same storage key supabase-js uses, so the main page's sign-in is shared
+  const SALES_PAGE = location.origin + location.pathname.replace(/[^/]*$/, '');
+  // Which Supabase "domain" each collection lives in (has_domain_access decides who can read/write each domain)
+  const DOM = { act: 'daily_reports', plan: 'daily_reports', mis: 'daily_reports', tgt: 'management', acts: 'management', rop: 'inventory',
+    ret: 'daily_reports', risk: 'risks', prod: 'inventory', inv: 'inventory', rt: 'gas_operations', yt: 'yas_operations', ya: 'float',
+    pa: 'yas_operations', sdl: 'yas_operations', sl: 'sales', al: 'sales', spu: 'sales', dr: 'daily_reports', ap: 'workflows', jn: 'accounting', emp: 'hr' };
+  const ARR = ['acts', 'ret', 'prod', 'inv', 'rt', 'ap', 'jn', 'emp', 'sl', 'al', 'spu', 'yt', 'ya', 'pa', 'sdl', 'dr'];
+  const MAP = ['act', 'plan', 'risk', 'tgt', 'rop'];
+  const MAP2 = ['mis'];
+  const ALLC = ARR.concat(MAP, MAP2);
+  const OVERLAP = 30000;
+  let sess = null, user = null, ORG = null, snap = {}, cursor = null, flushing = false, again = false, timer = null, ordCtr = 0, deferred = false;
+  const q = s => document.querySelector(s);
+  const enc = encodeURIComponent;
+  const rand = () => Array.from(crypto.getRandomValues(new Uint8Array(6)), b => b.toString(16).padStart(2, '0')).join('');
+  const hash = s => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
+  const nextOrd = () => Date.now() * 1000 + (ordCtr++ % 1000);
+  const resetSnap = () => { snap = {}; ALLC.forEach(c => snap[c] = {}); };
+  resetSnap();
+  // stable text form (the database does not keep key order, so compare in a fixed order)
+  const canon = v => {
+    if (Array.isArray(v)) return '[' + v.map(x => x === undefined ? 'null' : canon(x)).join(',') + ']';
+    if (v && typeof v === 'object') return '{' + Object.keys(v).filter(k => v[k] !== undefined).sort().map(k => JSON.stringify(k) + ':' + canon(v[k])).join(',') + '}';
+    return JSON.stringify(v);
+  };
+
+  // ----- session (Supabase Auth, email link) -----
+  const loadSess = () => { try { return JSON.parse(localStorage.getItem(SKEY) || 'null'); } catch (e) { return null; } };
+  const saveSess = s => { sess = s; try { localStorage.setItem(SKEY, JSON.stringify(s)); } catch (e) {} };
+  async function authFetch(path, opt) {
+    const r = await fetch(SB + path, Object.assign({ headers: { apikey: KEY, 'Content-Type': 'application/json' } }, opt));
+    let j = {}; try { j = await r.json(); } catch (e) {}
+    return { ok: r.ok, status: r.status, j };
+  }
+  async function refresh() {
+    if (!sess || !sess.refresh_token) return false;
+    const r = await authFetch('/auth/v1/token?grant_type=refresh_token', { method: 'POST', body: JSON.stringify({ refresh_token: sess.refresh_token }) });
+    if (!r.ok || !r.j.access_token) return false;
+    saveSess({ access_token: r.j.access_token, refresh_token: r.j.refresh_token, token_type: 'bearer', expires_in: r.j.expires_in, expires_at: r.j.expires_at || Math.floor(Date.now() / 1000) + r.j.expires_in, user: r.j.user || sess.user });
+    return true;
+  }
+  async function token() {
+    if (!sess) throw Object.assign(new Error('Not signed in'), { status: 401 });
+    if (sess.expires_at && sess.expires_at * 1000 - Date.now() < 60000) { if (!await refresh()) { sess = null; throw Object.assign(new Error('Session expired'), { status: 401 }); } }
+    return sess.access_token;
+  }
+  async function rest(path, opt) {
+    opt = opt || {};
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const t = await token();
+      const res = await fetch(SB + '/rest/v1' + path, {
+        method: opt.method || 'GET',
+        headers: Object.assign({ apikey: KEY, Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' }, opt.prefer ? { Prefer: opt.prefer } : {}),
+        body: opt.body ? JSON.stringify(opt.body) : undefined,
+      });
+      if (res.status === 401 && attempt === 0) { if (await refresh()) continue; }
+      let j = null; try { j = await res.json(); } catch (e) {}
+      if (res.status === 401) throw Object.assign(new Error('Session expired'), { status: 401 });
+      return { ok: res.ok, status: res.status, j };
+    }
+  }
+
+  // ----- records <-> app state -----
+  function flatten() {
+    const out = {};
+    ALLC.forEach(c => out[c] = {});
+    ARR.forEach(c => {
+      const a = typeof S !== 'undefined' ? S[c] : null;
+      if (!Array.isArray(a)) return;
+      const seen = {};
+      a.forEach(it => {
+        let r;
+        if (it && typeof it === 'object' && !Array.isArray(it)) {
+          if (!it._k) it._k = 'k' + rand();
+          r = it._k;
+          if (out[c][r]) { it._k = 'k' + rand(); r = it._k; }
+        } else { const h = 'h' + hash(canon(it)); seen[h] = (seen[h] || 0) + 1; r = h + '.' + seen[h]; }
+        out[c][r] = canon(it);
+      });
+    });
+    MAP.forEach(c => { const o = S[c]; if (o && typeof o === 'object') Object.keys(o).forEach(k => { if (o[k] !== undefined) out[c][k] = canon(o[k]); }); });
+    MAP2.forEach(c => { const o = S[c]; if (o && typeof o === 'object') Object.keys(o).forEach(m => { const x = o[m]; if (x && typeof x === 'object') Object.keys(x).forEach(i => { if (x[i] !== undefined) out[c][m + '|' + i] = canon(x[i]); }); }); });
+    return out;
+  }
+  function assemble(c) {
+    const recs = Object.keys(snap[c] || {}).map(r => Object.assign({ r }, snap[c][r]));
+    if (ARR.includes(c)) { recs.sort((a, b) => (a.ord - b.ord) || (a.r < b.r ? -1 : 1)); return recs.map(x => JSON.parse(x.v)); }
+    const o = {};
+    if (MAP.includes(c)) { recs.forEach(x => { o[x.r] = JSON.parse(x.v); }); return o; }
+    recs.forEach(x => { const p = x.r.split('|'); (o[p[0]] = o[p[0]] || {})[p[1]] = JSON.parse(x.v); });
+    return o;
+  }
+  const emptyOf = c => ARR.includes(c) ? [] : {};
+  function pendingCols() {
+    const cur = flatten(), set = new Set();
+    ALLC.forEach(c => {
+      const a = cur[c], b = snap[c];
+      for (const r in a) if (!b[r] || b[r].v !== a[r]) { set.add(c); break; }
+      if (!set.has(c)) for (const r in b) if (!(r in a)) { set.add(c); break; }
+    });
+    return set;
+  }
+  const rid = (c, r) => c + '|' + r;
+  function applyRows(rows) {
+    const touched = new Set();
+    rows.forEach(x => {
+      const i = x.record_id.indexOf('|'); if (i < 0) return;
+      const c = x.record_id.slice(0, i), r = x.record_id.slice(i + 1);
+      if (!snap[c] || DOM[c] !== x.domain) return;
+      const p = x.payload || {};
+      if (p.x || p.v === undefined) delete snap[c][r]; else snap[c][r] = { v: canon(p.v), ver: x.updated_at, ord: p.o || 0 };
+      touched.add(c);
+    });
+    return touched;
+  }
+  async function fetchRows(filter, sinceIso) {
+    const all = [];
+    for (let off = 0; ; off += 1000) {
+      const r = await rest('/app_records?select=domain,record_id,payload,updated_at&organization_id=eq.' + ORG + filter + (sinceIso ? '&updated_at=gte.' + enc(sinceIso) : '') +
+        '&order=updated_at.asc,domain.asc,record_id.asc&limit=1000&offset=' + off);
+      if (!r.ok) throw new Error('Could not load data (' + r.status + ')');
+      all.push(...r.j);
+      if (r.j.length < 1000) break;
+    }
+    return all;
+  }
+  async function pull() {
+    const since = cursor ? new Date(Date.parse(cursor) - OVERLAP).toISOString() : null;
+    const rows = await fetchRows('', since);
+    rows.forEach(x => { if (!cursor || x.updated_at > cursor) cursor = x.updated_at; });
+    return applyRows(rows);
+  }
+  async function resync(c) {
+    snap[c] = {};
+    applyRows(await fetchRows('&record_id=like.' + enc(c + '|') + '*'));
+  }
+
+  // ----- saving -----
+  const mk = (c, r, vstr, ord, x) => ({ organization_id: ORG, domain: DOM[c], record_id: rid(c, r), payload: x ? { x: 1, o: ord } : { v: JSON.parse(vstr), o: ord, x: 0 } });
+  async function getRow(c, r) {
+    const j = await rest('/app_records?select=domain,record_id,payload,updated_at&organization_id=eq.' + ORG + '&domain=eq.' + DOM[c] + '&record_id=eq.' + enc(rid(c, r)));
+    return j.ok && j.j.length ? j.j[0] : null;
+  }
+  const rowFilter = (c, r) => '/app_records?organization_id=eq.' + ORG + '&domain=eq.' + DOM[c] + '&record_id=eq.' + enc(rid(c, r));
+  async function pushOne(ch, out) {
+    const c = ch.c, r = ch.r, ord = ch.ord || (snap[c][r] && snap[c][r].ord) || nextOrd();
+    if (ch.base === 0) {                          // new record
+      const res = await rest('/app_records', { method: 'POST', prefer: 'return=representation', body: mk(c, r, ch.v, ord, false) });
+      if (res.ok) { out.applied.push({ c, r, ver: res.j[0].updated_at, ord, v: ch.v }); return; }
+      if (res.status === 403) { out.denied.push({ c }); return; }
+      if (res.status === 409) {                   // already exists: revive a deleted one, otherwise it is a clash
+        const ex = await getRow(c, r);
+        if (ex && ex.payload && ex.payload.x) {
+          const p = await rest(rowFilter(c, r) + '&updated_at=eq.' + enc(ex.updated_at), { method: 'PATCH', prefer: 'return=representation', body: { payload: mk(c, r, ch.v, ord, false).payload, updated_by: sess.user.id } });
+          if (p.ok && p.j.length) { out.applied.push({ c, r, ver: p.j[0].updated_at, ord, v: ch.v }); return; }
+        }
+        if (ex) out.conflicts.push(ex); else out.denied.push({ c });
+        return;
+      }
+      throw new Error('Save failed (' + res.status + ')');
+    }
+    const isDel = ch.v === null;
+    const res = await rest(rowFilter(c, r) + '&updated_at=eq.' + enc(ch.base), { method: 'PATCH', prefer: 'return=representation', body: { payload: mk(c, r, ch.v, ord, isDel).payload, updated_by: sess.user.id } });
+    if (!res.ok) { if (res.status === 403) { out.denied.push({ c }); return; } throw new Error('Save failed (' + res.status + ')'); }
+    if (res.j.length) { out.applied.push({ c, r, ver: res.j[0].updated_at, ord, del: isDel, v: ch.v }); return; }
+    const cur = await getRow(c, r);              // nothing updated: either someone else changed it, or this role may not write it
+    if (cur && cur.updated_at !== ch.base) out.conflicts.push(cur); else out.denied.push({ c });
+  }
+
+  function setStatus(t) {
+    const el = q('#sync'); if (!el) return;
+    el.textContent = t === 'ok' ? '● Saved' : t === 'saving' ? '● Saving…' : '● Offline – will retry';
+    el.style.color = t === 'ok' ? '#34d399' : t === 'saving' ? '#fbbf24' : '#fb7185';
+  }
+  function toast(msg) {
+    let t = q('#tgToast');
+    if (!t) { t = document.createElement('div'); t.id = 'tgToast'; document.body.appendChild(t); }
+    t.textContent = msg; t.style.display = 'block';
+    clearTimeout(t._h); t._h = setTimeout(() => { t.style.display = 'none'; }, 8000);
+  }
+  function safeRender() {
+    const m = q('#modal');
+    if (m && m.style.display === 'flex') { deferred = true; return; }
+    try { render(); if (typeof tw === 'function') tw(); } catch (e) {}
+  }
+  const rebuild = c => { S[c] = assemble(c); };
+  const pickState = () => { const d = {}; ALLC.forEach(c => { d[c] = S[c]; }); return d; };
+
+  async function flush() {
+    if (flushing) { again = true; return; }
+    flushing = true;
+    try {
+      for (let guard = 0; guard < 5; guard++) {
+        again = false;
+        const cur = flatten(), ch = [];
+        ALLC.forEach(c => {
+          Object.keys(cur[c]).forEach(r => {
+            const s = snap[c][r];
+            if (!s) ch.push({ c, r, v: cur[c][r], base: 0, ord: nextOrd() });
+            else if (s.v !== cur[c][r]) ch.push({ c, r, v: cur[c][r], base: s.ver });
+          });
+          Object.keys(snap[c]).forEach(r => { if (!(r in cur[c])) ch.push({ c, r, v: null, base: snap[c][r].ver }); });
+        });
+        if (!ch.length) { setStatus('ok'); break; }
+        setStatus('saving');
+        const out = { applied: [], conflicts: [], denied: [] };
+        // new records go in as one batch when possible; everything else one by one
+        const fresh = ch.filter(x => x.base === 0), upd = ch.filter(x => x.base !== 0);
+        if (fresh.length > 1) {
+          const res = await rest('/app_records', { method: 'POST', prefer: 'return=representation', body: fresh.map(x => mk(x.c, x.r, x.v, x.ord, false)) });
+          if (res.ok) res.j.forEach(row => {
+            const i = row.record_id.indexOf('|'), c = row.record_id.slice(0, i), r = row.record_id.slice(i + 1);
+            const x = fresh.find(f => f.c === c && f.r === r);
+            if (x) out.applied.push({ c, r, ver: row.updated_at, ord: x.ord, v: x.v });
+          });
+          else for (const x of fresh) await pushOne(x, out);
+        } else for (const x of fresh) await pushOne(x, out);
+        for (let i = 0; i < upd.length; i += 5) await Promise.all(upd.slice(i, i + 5).map(x => pushOne(x, out)));
+        out.applied.forEach(a => { if (a.del) delete snap[a.c][a.r]; else snap[a.c][a.r] = { v: a.v, ver: a.ver, ord: a.ord }; });
+        const touched = applyRows(out.conflicts.filter(Boolean));
+        for (const c of new Set(out.denied.map(d => d.c))) { await resync(c); touched.add(c); }
+        if (touched.size) { touched.forEach(rebuild); safeRender(); }
+        if (out.conflicts.length) toast('Someone else changed the same record at the same time. Their version was kept and your screen was refreshed – please check and re-enter if needed.');
+        if (out.denied.length) toast('Your role is not allowed to save some of these changes, so they were not kept.');
+        if (!again && !out.conflicts.length && !out.denied.length) { setStatus('ok'); break; }
+      }
+    } catch (e) {
+      if (e && e.status === 401) { location.reload(); return; }
+      setStatus('off');
+      try { localStorage.setItem('gym_unsynced', JSON.stringify({ u: user && user.email, d: pickState() })); } catch (x) {}
+      clearTimeout(timer); timer = setTimeout(flush, 15000);
+    } finally { flushing = false; }
+  }
+  async function poll() {
+    if (!user || flushing) return;
+    try {
+      await flush();
+      const pend = pendingCols();
+      const touched = await pull();
+      let did = false;
+      touched.forEach(c => { if (!pend.has(c)) { rebuild(c); did = true; } });
+      if (did) safeRender();
+    } catch (e) { setStatus('off'); }
+  }
+
+  function mergeIn(d) {
+    let n = 0;
+    const strip = it => { if (it && typeof it === 'object' && !Array.isArray(it)) { const z = Object.assign({}, it); delete z._k; return canon(z); } return canon(it); };
+    ARR.forEach(c => { if (!Array.isArray(d[c])) return; S[c] = S[c] || []; const have = new Set(S[c].map(strip)); d[c].forEach(it => { const s = strip(it); if (!have.has(s)) { have.add(s); S[c].push(it); n++; } }); });
+    MAP.forEach(c => { if (!d[c] || typeof d[c] !== 'object') return; S[c] = S[c] || {}; Object.keys(d[c]).forEach(k => { if (!(k in S[c])) { S[c][k] = d[c][k]; n++; } }); });
+    MAP2.forEach(c => { if (!d[c] || typeof d[c] !== 'object') return; S[c] = S[c] || {}; Object.keys(d[c]).forEach(m => { S[c][m] = S[c][m] || {}; Object.keys(d[c][m] || {}).forEach(i => { if (!(i in S[c][m])) { S[c][m][i] = d[c][m][i]; n++; } }); }); });
+    return n;
+  }
+
+  // ----- hooks used by the original app code -----
+  window.__LOAD = function () {
+    const o = {};
+    ALLC.forEach(c => { o[c] = Object.keys(snap[c]).length ? assemble(c) : emptyOf(c); });
+    try { const p = JSON.parse(localStorage.getItem('gym_pref') || '{}'); if (p.lang) o.lang = p.lang; } catch (e) {}
+    return o;
+  };
+  window.__SAVE = function () {
+    try { localStorage.setItem('gym_pref', JSON.stringify({ lang: S.lang || 'en' })); } catch (e) {}
+    setStatus('saving'); clearTimeout(timer); timer = setTimeout(flush, 400);
+  };
+  window.__AFTER_MODAL = function () { if (deferred) { deferred = false; safeRender(); } };
+  window.__SIGNOUT = async function () {
+    try { if (sess) await fetch(SB + '/auth/v1/logout', { method: 'POST', headers: { apikey: KEY, Authorization: 'Bearer ' + sess.access_token } }); } catch (e) {}
+    try { localStorage.removeItem(SKEY); } catch (e) {}
+    location.reload();
+  };
+
+  // ----- sign-in screen -----
+  const gate = q('#gate');
+  const say = (msg, bad) => { const e = q('#gmsg'); if (!e) return; e.textContent = msg || ''; e.style.color = bad ? '#fb7185' : '#9bb7cc'; };
+  function showLogin(note) {
+    gate.style.display = 'flex';
+    q('#gbox').innerHTML = '<h2>Sign in</h2><p class="gs">Taifa Gas &amp; Yas/Mixx – Management System</p>' +
+      '<p class="gs">Use the email address that was invited to the system. We will email you a one-time sign-in link.</p>' +
+      '<label>Email address</label><input id="ge" type="email" autocomplete="email" autocapitalize="none">' +
+      '<button id="gb" class="p">Email me a sign-in link</button><p id="gmsg" class="gs"></p>' +
+      '<p class="gs">Already signed in on the main page? Reload this page. Sales-person logins use the main Cloud Sales page.</p>';
+    if (note) say(note, true);
+    q('#gb').onclick = async () => {
+      const email = q('#ge').value.trim().toLowerCase();
+      if (!/^\S+@\S+\.\S+$/.test(email)) return say('Enter a valid email address.', true);
+      q('#gb').disabled = true; say('Sending…');
+      const r = await authFetch('/auth/v1/otp?redirect_to=' + enc(location.origin + location.pathname), { method: 'POST', body: JSON.stringify({ email, create_user: false }) });
+      if (r.ok) say('Check your email and open the link on this device. You can close this page.');
+      else { say((r.j && (r.j.msg || r.j.error_description || r.j.message)) || 'Could not send the link.', true); q('#gb').disabled = false; }
+    };
+  }
+  function showBlock(title, html) { gate.style.display = 'flex'; q('#gbox').innerHTML = '<h2>' + title + '</h2><p class="gs">' + html + '</p><button id="gb" class="p">Sign out</button>'; q('#gb').onclick = window.__SIGNOUT; }
+
+  async function start() {
+    resetSnap(); cursor = null;
+    const m = await rest('/memberships?select=organization_id,role,active&user_id=eq.' + sess.user.id + '&active=eq.true');
+    if (!m.ok || !m.j.length) return showBlock('No access', 'This account (' + (sess.user.email || '') + ') is not linked to the organization. Ask the Managing Director to add you.');
+    ORG = m.j[0].organization_id;
+    user = { email: sess.user.email, name: sess.user.email, username: sess.user.email, role: m.j[0].role, id: sess.user.id };
+    if (user.role === 'rsp' || user.role === 'ssp') return showBlock('Use the Cloud Sales page', 'Sales-person accounts record sales on the Cloud Sales page, which keeps each salesperson\'s records private. <a href="' + SALES_PAGE + '" style="color:#7dd3fc">Open Cloud Sales</a>.');
+    await pull();
+    window.TG = { user, flush, poll, mergeIn, toast, ALLC, signOut: window.__SIGNOUT };
+    const run = sel => document.querySelectorAll(sel).forEach(t => { const s = document.createElement('script'); s.textContent = t.textContent; document.body.appendChild(s); });
+    run('script[type="text/plain"][data-app]');
+    run('script[type="text/plain"][data-post]');
+    gate.style.display = 'none'; setStatus('ok');
+    setInterval(poll, 60000);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') poll(); });
+    window.addEventListener('online', poll);
+  }
+
+  (async function boot() {
+    try {
+      // returning from the email link: tokens arrive in the URL hash
+      if (location.hash.length > 1) {
+        const h = new URLSearchParams(location.hash.slice(1));
+        if (h.get('error_description')) { history.replaceState(null, '', location.pathname); return showLogin(h.get('error_description').replace(/\+/g, ' ')); }
+        if (h.get('access_token')) {
+          const u = await authFetch('/auth/v1/user', { headers: { apikey: KEY, Authorization: 'Bearer ' + h.get('access_token') } });
+          if (u.ok) saveSess({ access_token: h.get('access_token'), refresh_token: h.get('refresh_token'), token_type: 'bearer', expires_in: +h.get('expires_in') || 3600, expires_at: +h.get('expires_at') || Math.floor(Date.now() / 1000) + (+h.get('expires_in') || 3600), user: u.j });
+          history.replaceState(null, '', location.pathname);
+        }
+      }
+      sess = sess || loadSess();
+      if (!sess || !sess.access_token) return showLogin();
+      if (!sess.user || !sess.user.id) { const u = await authFetch('/auth/v1/user', { headers: { apikey: KEY, Authorization: 'Bearer ' + sess.access_token } }); if (!u.ok) return showLogin(); sess.user = u.j; saveSess(sess); }
+      await start();
+    } catch (e) {
+      if (e && e.status === 401) return showLogin('Your session expired. Please sign in again.');
+      gate.style.display = 'flex';
+      q('#gbox').innerHTML = '<h2>Cannot start</h2><p class="gs">' + (e.message || 'Cannot reach the server.') + ' Check your internet connection and reload the page.</p>';
+    }
+  })();
+})();
+</script>
+<script type="text/plain" data-app>
+const K='gym_v1',fmt=n=>Math.round(+n||0).toLocaleString('en-US'),esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const R={md:'MD / Board',gfm:'Group Finance Manager',trc:'Treasury Controller',rgm:'Regional Gas Manager',ymm:'Yas/Mixx Manager',wdm:'Wakala Development Manager',ia:'Internal Auditor'};
+const L=[
+{id:'gas',un:'g',n:'Taifa Gas – Tabora',tg:'8 district offices; 6,000 cylinders/month',u:'cylinders',t:6000,o:'rgm',ty:'Sales volume (net of returns)',f:'Sales, stock, delivery and cash reconciliation by district.'},
+{id:'yas',un:'y',n:'Yas & Mixx – Tabora',tg:'4 service desks + 8 district float offices; TZS 9,505,000,000 monthly turnover',u:'TZS turnover',t:9505e6,o:'ymm',ty:'Transaction turnover – NOT revenue, profit, cash or float',f:'Daily transaction and settlement reconciliation; keep turnover, income and float balance separate.'},
+{id:'wak',un:'y',n:'Yas/Mixx Wakala portfolio',tg:'1,720 active Wakala',u:'active Wakala',t:1720,o:'wdm',ty:'Count',f:'Confirm active status, transaction activity and outlet-level performance.'},
+{id:'pri',un:'y',n:'Priority Wakala recovery',tg:'324 unserved / priority Wakala',u:'Wakala served',t:324,o:'wdm',ty:'Count (not added to the 1,720 until verified)',f:'Track contact, reactivation, reason for inactivity and outcome.'},
+{id:'rec',un:'y',n:'New Wakala recruitment',tg:'215 new registrations / recruitments',u:'recruits',t:215,o:'wdm',ty:'Count by stage: application → approval → activation → first transaction',f:'Verify applications, approvals, activation and first transaction.'}];
+const ACT0=[['Complete bank, cash, mobile-money and float reconciliations','trc','2026-11-13','b'],['Submit district-level gas sales, stock and cash reports','rgm','2026-11-14','g'],['Submit Yas/Mixx settlement reports and recovery plan for 324 Wakala','ymm','2026-11-15','y'],['Verify 1,720 active Wakala and evidence for 215 recruitments','wdm','2026-11-17','y'],['Conduct independent cash, float and stock verification','ia','2026-11-22','b']];
+const MIS=[['Signed monthly management accounts – Taifa Gas and Yas/Mixx',['gfm'],'b'],['Bank, cash, mobile-money and float reconciliations with supporting statements',['trc'],'b'],['Taifa Gas district sales, stock movement, deliveries and receivables',['rgm'],'g'],['Yas/Mixx outlet transactions, settlements, Wakala status and recruitment tracker',['ymm','wdm'],'y'],['Risk register, incidents, audit findings and action-plan status',['ia'],'b']];
+const RSK=[['Cash, float and settlement','Shortages, delayed settlement, unauthorised transfers or misstated turnover.','Daily independent reconciliation; maker-checker; approved limits; exception sign-off.','trc','y'],['Gas stock','Cylinder shrinkage, unrecorded returns or delivery disputes.','Documented goods received/issued; stock counts; district reconciliation; variance investigation.','rgm','g'],['Transport and distribution','Fuel leakage, vehicle downtime, accidents and high delivery costs.','Trip logs, fuel controls, preventive maintenance and route profitability.','rgm','g'],['Regulatory and contractual','Operating outside provider, licensing or contractual requirements.','Maintain licences, provider approvals, contracts and compliance calendar.','gfm','b'],['Working-capital misuse','Cross-subsidy and liquidity pressure between business lines.','Separate bank/float accounts where practical; approved intercompany entries.','gfm','b']];
+const DEFS=[['Sales volume','Quantity sold to customers, net of properly recorded returns.'],['Transaction turnover','Value processed through a channel; not automatically revenue or profit.'],['Commission income','Income earned under provider terms, recognised per the agreement and accounting policy.'],['Float balance','Operating value held for settlement; reconcile separately from turnover.'],['Actual vs target','Show variance only when a verified actual and a target both exist.']];
+let S={asat:'2026-11-13',act:{},plan:{},mis:{},risk:{},ret:[],tgt:{},acts:[]},ME='md',UN='all',PG='dash';
+try{Object.assign(S,window.__LOAD())}catch(e){}
+const save=()=>{try{window.__SAVE()}catch(e){}};
+const $=s=>document.querySelector(s),vis=u=>UN=='all'||u=='b'||u==UN,ACT=()=>ACT0.concat(S.acts||[]);
+const isM=()=>ME=='md'||ME=='gfm',can=o=>isM()||[].concat(o).includes(ME),dd=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
+const tgt=l=>S.tgt[l.id]!=null&&S.tgt[l.id]!==''?+S.tgt[l.id]:l.t,kpi=(k,v,s)=>`<div class="card"><div class="k">${k}</div><div class="v">${v}</div><div class="note">${s||''}</div></div>`;
+const tbl=(h,r)=>`<div class="tw"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${r.map(x=>`<tr>${x.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${h.length}" class="note">Nothing here yet.</td></tr>`}</table></div>`;
+function form(title,fs,cb,ok){const m=$('#modal');m.innerHTML=`<div><h3>${title}</h3>${fs.map(f=>`<label>${f.l||''}</label>`+(f.t=='select'?`<select id="f_${f.k}">${f.o.map(o=>`<option value="${esc(o[0])}" ${o[0]==f.v?'selected':''}>${esc(o[1])}</option>`).join('')}</select>`:f.t=='textarea'?`<textarea id="f_${f.k}" rows="3">${esc(f.v)}</textarea>`:f.t=='check'?`<input type="checkbox" id="f_${f.k}" ${f.v?'checked':''} style="width:auto">`:f.t=='html'?f.h:`<input id="f_${f.k}" type="${f.t||'text'}" value="${esc(f.v)}">`)).join('')}<p class="r" id="fe"></p><button class="p" id="fo">${ok||'Save'}</button> <button id="fc">Cancel</button></div>`;m.style.display='flex';
+$('#fc').onclick=()=>m.style.display='none';$('#fo').onclick=()=>{const v={};fs.forEach(f=>{const e=$('#f_'+f.k);if(e)v[f.k]=f.t=='check'?e.checked:e.value});const er=cb(v);if(er)return $('#fe').textContent=er;m.style.display='none';save();render()}}
+function actForm(id){const l=L.find(x=>x.id==id),a=S.act[id]||{};form('Actual – '+esc(l.n),[{t:'html',h:`<p class="note">Enter only figures supported by source records. Target: ${esc(l.tg)}</p>`},{k:'v',l:'Actual ('+l.u+')',t:'number',v:a.v},{k:'note',l:'Source / note',t:'textarea',v:a.note},{k:'d',l:'Period / as-at date',t:'date',v:a.d||S.asat},{k:'ver',l:'Supported by verified source records (statement, register, ledger)',t:'check',v:a.ver}],v=>{S.act[id]={v:v.v,note:v.note,d:v.d,ver:v.ver,by:ME}})}
+function tgtForm(id){const l=L.find(x=>x.id==id);form('Monthly target – '+esc(l.n),[{k:'v',l:'Target per month ('+l.u+')',t:'number',v:tgt(l)}],v=>{S.tgt[id]=v.v})}
+function retForm(){const ls=L.filter(l=>vis(l.un)&&can(l.o));if(!ls.length)return alert('Your role cannot enter returns for the selected unit.');form('Daily return',[{k:'d',l:'Date',t:'date',v:S.asat},{k:'l',l:'Business line',t:'select',o:ls.map(l=>[l.id,l.n])},{k:'p',l:'District office / service desk / outlet'},{k:'v',l:'Value (units sold, or TZS turnover)',t:'number'},{k:'n',l:'Note / reference',t:'textarea'}],v=>{if(!v.d||v.v==='')return 'Date and value are required';S.ret.push({d:v.d,l:v.l,p:v.p,v:+v.v,n:v.n,by:ME})})}
+function actEdit(i){const a=ACT()[i],p=S.plan[i]||{st:'Open'},ver=isM()||ME=='ia';form('Update action '+(i+1),[{t:'html',h:`<p>${esc(a[0])}</p>`},{k:'st',l:'Status',t:'select',o:['Open','In progress','Submitted',...(ver?['Verified']:[])].map(x=>[x,x]),v:p.st},{k:'ref',l:'Evidence reference',v:p.ref},{k:'note',l:'Note / blocker',t:'textarea',v:p.note}],v=>{S.plan[i]={st:v.st,ref:v.ref,note:v.note,by:ME,d:S.asat}})}
+function actNew(){form('Add action',[{k:'t',l:'Action'},{k:'o',l:'Owner',t:'select',o:Object.entries(R)},{k:'u',l:'Unit',t:'select',o:[['g','Taifa Gas'],['y','Yas & Mixx'],['b','Both']]},{k:'d',l:'Due date',t:'date',v:S.asat}],v=>{if(!v.t||!v.d)return 'Action and due date are required';(S.acts=S.acts||[]).push([v.t,v.o,v.d,v.u])})}
+function riskForm(i){const r=S.risk[i]||{rate:'Not assessed',ctl:'Not evidenced'};form('Risk – '+RSK[i][0],[{k:'rate',l:'Residual risk rating',t:'select',o:['Not assessed','Low','Medium','High'].map(x=>[x,x]),v:r.rate},{k:'ctl',l:'Control status',t:'select',o:['Not evidenced','Partly in place','In place & evidenced'].map(x=>[x,x]),v:r.ctl},{k:'note',l:'Evidence / action',t:'textarea',v:r.note}],v=>{S.risk[i]={rate:v.rate,ctl:v.ctl,note:v.note}})}
+const flag=i=>{const s=(S.plan[i]||{st:'Open'}).st;if(s=='Submitted'||s=='Verified')return[s,'g',0];const d=dd(S.asat,ACT()[i][2]);return d<0?['Overdue '+(-d)+'d','r',3]:d<=3?['Due in '+d+'d','o',2]:[s,'',1]};
+const mm=()=>S.asat.slice(0,7),mtd=id=>S.ret.filter(x=>x.l==id&&x.d.slice(0,7)==mm()).reduce((q,x)=>q+x.v,0);
+function cell(l){const a=S.act[l.id],t=tgt(l);if(!a)return['Not provided / unverified','o','—'];const v=a.v!==''&&a.v!=null?fmt(a.v)+' '+l.u:'Entered';return a.ver&&t&&a.v!==''?[v,'g',(a.v/t*100).toFixed(1)+'%']:[v+' (unverified)','o','No % until verified']}
+const P={
+dash(){const ls=L.filter(l=>vis(l.un)),ac=ACT().map((a,i)=>i).filter(i=>vis(ACT()[i][3])),fl=ac.map(flag),od=ac.filter((i,j)=>fl[j][2]==3),ms=MIS.map((x,i)=>i).filter(i=>vis(MIS[i][2])),ds=ms.filter(i=>(S.mis[mm()]||{})[i]),rs=RSK.map((x,i)=>i).filter(i=>vis(RSK[i][4])),ev=rs.filter(i=>(S.risk[i]||{}).ctl=='In place & evidenced'),ver=ls.filter(l=>(S.act[l.id]||{}).ver).length;
+return `<div class="f">PRELIMINARY – actual performance is unverified until source records are submitted and reviewed. Targets are management targets.</div><div class="grid">${kpi('Lines with verified actuals',ver+' / '+ls.length)+kpi('Actions overdue',od.length,fl.filter(f=>f[2]==0).length+' of '+ac.length+' done')+kpi('MI pack '+mm(),ds.length+' / '+ms.length)+kpi('Risk controls evidenced',ev.length+' / '+rs.length)}</div><div class="card"><h3>Business-line status</h3>${tbl(['Business line','Owner','Target','Actual','Achievement'],ls.map(l=>{const c=cell(l);return[esc(l.n),R[l.o],esc(l.tg),`<span class="${c[1]}">${esc(c[0])}</span>`,c[2]]}))}</div><div class="card"><h3>Overdue actions</h3>${od.length?tbl(['No.','Action','Owner','Deadline','Overdue'],od.map(i=>[i+1,esc(ACT()[i][0]),R[ACT()[i][1]],ACT()[i][2],flag(i)[0]])):'<span class="g">None overdue at '+S.asat+'.</span>'}</div>`},
+score(){const ls=L.filter(l=>vis(l.un));return `<div class="f">Achievement % is shown only when a verified actual and a numeric target both exist. Turnover is not revenue, profit, cash or float.</div><div class="card"><h3>Business-line scorecard</h3>${tbl(['Business line','Owner','Target','Metric type','Actual','Achievement','Logged this month','Management focus',''],ls.map(l=>{const c=cell(l),m=mtd(l.id);return[esc(l.n),R[l.o],tgt(l)?fmt(tgt(l))+' '+l.u:'Not set',`<span class="note">${esc(l.ty)}</span>`,`<span class="${c[1]}">${esc(c[0])}</span>`,c[2],m?fmt(m):'—',`<span class="note">${esc(l.f)}</span>`,(can(l.o)?`<button class="s p" onclick="actForm('${l.id}')">Update actual</button> `:'')+(isM()?`<button class="s" onclick="tgtForm('${l.id}')">Set target</button>`:'')]}))}</div><div class="card"><h3>Definitions</h3>${tbl(['Term','Meaning'],DEFS)}</div>`},
+ret(){const r=S.ret.map((x,i)=>[x,i]).filter(([x])=>vis(L.find(l=>l.id==x.l).un)).reverse().slice(0,200);return `<div class="sbt"><button class="p" onclick="retForm()">+ Daily return</button></div><div class="f">Daily returns by district office, service desk or outlet. Monthly totals appear on the Scorecard as “Logged this month”; they are not verified actuals until confirmed.</div><div class="card">${tbl(['Date','Line','District / desk / outlet','Value','Note','By',''],r.map(([x,i])=>[x.d,esc(L.find(l=>l.id==x.l).n),esc(x.p),fmt(x.v),esc(x.n),R[x.by]||'',can(x.by)||isM()?`<button class="s d" onclick="if(confirm('Delete this return?')){S.ret.splice(${i},1);save();render()}">Delete</button>`:'']))}</div>`},
+plan(){const ac=ACT().map((a,i)=>i).filter(i=>vis(ACT()[i][3]));return `<div class="sbt">${isM()?'<button class="p" onclick="actNew()">+ Add action</button>':''}</div><div class="card"><h3>Management action plan</h3>${tbl(['No.','Action','Owner','Deadline','Status','Evidence / note',''],ac.map(i=>{const a=ACT()[i],f=flag(i),p=S.plan[i]||{};return[i+1,`<span style="white-space:normal">${esc(a[0])}</span>`,R[a[1]],a[2],`<span class="tag ${f[1]}">${esc(f[0])}</span>`,esc([p.ref,p.note].filter(Boolean).join(' · ')||'—'),can(a[1])||ME=='ia'?`<button class="s p" onclick="actEdit(${i})">Update</button>`:'']}))}</div>`},
+mis(){const m=mm(),o=(S.mis[m]=S.mis[m]||{}),ms=MIS.map((x,i)=>i).filter(i=>vis(MIS[i][2]));return `<div class="grid">${kpi('Submitted',ms.filter(i=>o[i]).length+' / '+ms.length)+kpi('Outstanding',ms.filter(i=>!o[i]).length)}</div><div class="card"><h3>Monthly management information checklist – ${m}</h3>${tbl(['No.','Required submission','Responsible','Status','By / date',''],ms.map(i=>[i+1,`<span style="white-space:normal">${esc(MIS[i][0])}</span>`,MIS[i][1].map(x=>R[x]).join(' / '),o[i]?'<span class="tag g">Submitted</span>':'<span class="tag o">Outstanding</span>',o[i]?R[o[i].by]+' · '+o[i].d:'—',can(MIS[i][1])?`<button class="s" onclick="misTog(${i})">${o[i]?'Undo':'Mark submitted'}</button>`:'']))}</div>`},
+risk(){const rs=RSK.map((x,i)=>i).filter(i=>vis(RSK[i][4]));return `<div class="card"><h3>Priority risk and internal-control register</h3><p class="note">Priority areas for verification – not an assertion that loss or fraud has occurred.</p>${tbl(['Risk area','Potential exposure','Recommended control','Owner','Rating','Control status','Evidence / action',''],rs.map(i=>{const x=RSK[i],r=S.risk[i]||{rate:'Not assessed',ctl:'Not evidenced'};return[esc(x[0]),`<span style="white-space:normal">${esc(x[1])}</span>`,`<span style="white-space:normal">${esc(x[2])}</span>`,R[x[3]],`<span class="tag ${r.rate=='High'?'r':r.rate=='Medium'?'o':''}">${r.rate}</span>`,r.ctl,esc(r.note||'—'),can(x[3])?`<button class="s p" onclick="riskForm(${i})">Update</button>`:'']}))}</div>`},
+bak(){return `<div class="card"><h3>Backup</h3><p class="note">Entries are saved in your Supabase database and shared with signed-in users according to each person's role. Export a copy regularly as an extra safeguard. The Managing Director can import an older backup; it adds records and never changes existing ones.</p><button onclick="exp()">Export data</button> <input type="file" accept=".json" onchange="imp(this)"> ${ME=='md'?'<button class="d" onclick="rst()">Erase everything</button>':''}</div>`}};
+function misTog(i){const o=S.mis[mm()];if(o[i])delete o[i];else o[i]={by:ME,d:S.asat};save();render()}
+function exp(){const a=document.createElement('a');a.href='data:application/json,'+encodeURIComponent(JSON.stringify(S));a.download='gas_yasmixx_data_'+S.asat+'.json';document.body.appendChild(a);a.click();a.remove()}
+function imp(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{S=Object.assign(S,JSON.parse(r.result));save();render()}catch(e){alert('Not a valid data file')}};r.readAsText(f)}
+function rst(){if(prompt('This erases every record. Type ERASE to confirm.')=='ERASE'){try{localStorage.removeItem(K)}catch(e){}location.reload()}}
+const TABS=[['dash','Dashboard'],['score','Scorecard'],['ret','Daily Returns'],['plan','Action Plan'],['mis','Monthly MI Pack'],['risk','Risk Register'],['bak','Backup']];
+function render(){$('#nav').innerHTML=TABS.map(t=>`<button class="${PG==t[0]?'on':''}" onclick="PG='${t[0]}';render()">${t[1]}</button>`).join('');$('#main').innerHTML=P[PG]()}
+$('#me').innerHTML=Object.entries(R).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+$('#me').onchange=e=>{ME=e.target.value;render()};$('#un').onchange=e=>{UN=e.target.value;render()};
+$('#as').value=S.asat;$('#as').onchange=e=>{S.asat=e.target.value||S.asat;save();render()};
+$('#th').onclick=()=>{const d=document.documentElement,dk=d.dataset.theme?d.dataset.theme=='dark':matchMedia('(prefers-color-scheme:dark)').matches;d.dataset.theme=dk?'light':'dark'};
+render();
+</script>
+<script type="text/plain" data-app>
+Object.assign(R,{acc:'Accountant',hr:'HR Manager'});
+const DC=['Tabora Municipal','Uyui','Igunga','Nzega DC','Nzega TC','Sikonge','Urambo','Kaliua'],UL={g:'Taifa Gas',y:'Yas & Mixx'},LIM=5e6;
+['prod','inv','rt','ap','jn','emp'].forEach(k=>S[k]=S[k]||[]);
+const COA=[['1000','Cash & bank','A'],['1100','Mobile-money float','A'],['1200','Receivables','A'],['1300','Inventory','A'],['1500','Equipment & vehicles','A'],['2000','Payables','L'],['2100','Loans','L'],['3000','Owner capital','E'],['4000','Gas sales','I'],['4100','Commission income (Yas/Mixx)','I'],['5000','Cost of gas sold','X'],['5100','Salaries & wages','X'],['5200','Transport & fuel','X'],['5300','Rent & utilities','X'],['5400','Other expenses','X']];
+const AN=c=>{const a=COA.find(x=>x[0]==c);return a?a[0]+' '+a[1]:c},uo=u=>u=='g'?'rgm':'ymm',cw=u=>isM()||ME==uo(u),T=a=>a.reduce((s,r)=>s+r[1],0),pr=id=>S.prod.find(p=>p.id==id)||{n:'?',u:'g',min:0,cost:0},pl=p=>UL[p.u]+' – '+p.n+(p.sz?' '+p.sz:'');
+const stock=(dc,p,t)=>S.inv.filter(m=>m.dc==dc&&m.p==p&&m.st=='ok'&&m.d<=(t||'9999')).reduce((a,m)=>a+m.q,0);
+const CH={'Payment':['u','acc','gfm','md'],'Stock adjustment':['u','acc','gfm'],'Price change':['u','gfm','md'],'Journal / adjustment':['acc','gfm'],'Leave / HR':['hr','gfm'],'Route / centre change':['u','gfm']};
+const ch=a=>CH[a.t].filter(r=>!(r=='md'&&a.t=='Payment'&&a.amt<LIM)).map(r=>r=='u'?uo(a.u):r);
+const mkAp=(t,u,desc,amt,mv)=>({id:S.ap.length+1,t,u,desc,amt:+amt||0,by:ME,d:S.asat,step:0,h:[],st:'Pending',mv});
+const so=(a,v)=>a.map(x=>[x[0]||x,x[1]||x]).map(([k,l])=>[k,l]);
+function prodForm(id){const p=S.prod.find(x=>x.id==id)||{u:UN=='y'?'y':'g'};form(id?'Edit product':'Add product',[{k:'u',l:'Business unit',t:'select',o:[['g','Taifa Gas'],['y','Yas & Mixx']],v:p.u},{k:'n',l:'Product / service name',v:p.n},{k:'sz',l:'Size / pack / unit of sale',v:p.sz},{k:'price',l:'Selling price (TZS)',t:'number',v:p.price},{k:'cost',l:'Unit cost (TZS)',t:'number',v:p.cost},{k:'min',l:'Reorder level (qty per centre)',t:'number',v:p.min}],v=>{if(!cw(v.u))return 'Your role cannot manage this unit';if(!v.n||v.price==='')return 'Name and price are required';const o={id:p.id||'P'+Date.now(),u:v.u,n:v.n,sz:v.sz,price:+v.price,cost:+v.cost||0,min:+v.min||0};if(id)S.prod[S.prod.findIndex(x=>x.id==id)]=o;else S.prod.push(o)})}
+function mvForm(){const ps=S.prod.filter(p=>vis(p.u)&&cw(p.u));if(!ps.length)return alert('Add a product first, or your role cannot manage stock for this unit.');form('Stock movement',[{k:'d',l:'Date',t:'date',v:S.asat},{k:'dc',l:'Distribution centre',t:'select',o:DC.map(x=>[x,x])},{k:'p',l:'Product',t:'select',o:ps.map(p=>[p.id,pl(p)])},{k:'ty',l:'Type',t:'select',o:['Receipt','Issue / delivery','Return','Count adjustment (needs approval)'].map(x=>[x,x])},{k:'q',l:'Quantity (adjustment: use − for shortage)',t:'number'},{k:'ref',l:'Reference (GRN, delivery note, count sheet)'}],v=>{const q=+v.q;if(!v.d||!q)return 'Date and quantity are required';const ad=v.ty[0]=='C',p=pr(v.p),m={id:'M'+Date.now(),d:v.d,dc:v.dc,p:v.p,ty:v.ty,q:v.ty[0]=='I'?-Math.abs(q):ad?q:Math.abs(q),ref:v.ref,st:ad?'pend':'ok',by:ME};S.inv.push(m);if(ad)S.ap.push(mkAp('Stock adjustment',p.u,'Adjust '+q+' × '+p.n+' at '+v.dc+' ('+(v.ref||'no ref')+')',Math.abs(q)*p.cost,m.id))})}
+function rtForm(id){const r=S.rt.find(x=>x.id==id)||{u:'g'};form(id?'Edit route':'Add route',[{k:'u',l:'Unit',t:'select',o:[['g','Taifa Gas – deliveries'],['y','Yas & Mixx – float / Wakala visits']],v:r.u},{k:'n',l:'Route name',v:r.n},{k:'dc',l:'Starts from centre',t:'select',o:DC.map(x=>[x,x]),v:r.dc},{k:'stops',l:'Stops (towns, wards, outlets in order)',t:'textarea',v:r.stops},{k:'veh',l:'Vehicle / rider',v:r.veh},{k:'drv',l:'Driver / officer',v:r.drv},{k:'day',l:'Days / frequency',v:r.day},{k:'km',l:'Distance (km)',t:'number',v:r.km}],v=>{if(!cw(v.u))return 'Your role cannot plan routes for this unit';if(!v.n)return 'Route name is required';const o=Object.assign({},v,{id:r.id||'R'+Date.now(),km:+v.km||0});if(id)S.rt[S.rt.findIndex(x=>x.id==id)]=o;else S.rt.push(o)})}
+function apForm(t){form('New approval request',[{k:'t',l:'Request type',t:'select',o:Object.keys(CH).map(x=>[x,x]),v:t},{k:'u',l:'Unit',t:'select',o:[['g','Taifa Gas'],['y','Yas & Mixx']],v:UN=='y'?'y':'g'},{k:'desc',l:'Description',t:'textarea'},{k:'amt',l:'Amount (TZS, if any)',t:'number'}],v=>{if(!v.desc)return 'Description is required';S.ap.push(mkAp(v.t,v.u,v.desc,v.amt))})}
+function apDo(i,ok){const a=S.ap[i],c=ch(a),r=c[a.step];if(ME==a.by)return alert('You cannot approve your own request.');if(ME!=r&&ME!='md')return alert('Awaiting '+R[r]);const n=ok?'':prompt('Reason for rejection');if(!ok&&!n)return;a.h.push(R[ME]+(ok?' approved ':' rejected ')+S.asat+(n?' – '+n:''));if(!ok)a.st='Rejected';else if(++a.step>=c.length)a.st='Approved';const m=a.mv&&S.inv.find(x=>x.id==a.mv);if(m&&a.st!='Pending')m.st=a.st=='Approved'?'ok':'rej';save();render()}
+function jnForm(){form('Journal entry',[{k:'d',l:'Date',t:'date',v:S.asat},{k:'u',l:'Unit',t:'select',o:[['g','Taifa Gas'],['y','Yas & Mixx']],v:UN=='y'?'y':'g'},{k:'dr',l:'Debit account',t:'select',o:COA.map(a=>[a[0],a[0]+' '+a[1]])},{k:'cr',l:'Credit account',t:'select',o:COA.map(a=>[a[0],a[0]+' '+a[1]]),v:'4000'},{k:'a',l:'Amount (TZS)',t:'number'},{k:'n',l:'Narration / source document',t:'textarea'}],v=>{if(!v.d||!(+v.a>0))return 'Date and a positive amount are required';if(v.dr==v.cr)return 'Debit and credit accounts must differ';S.jn.push({d:v.d,u:v.u,dr:v.dr,cr:v.cr,a:+v.a,n:v.n,by:ME})})}
+function empForm(id){const e=S.emp.find(x=>x.id==id)||{u:'g',st:'Active'};form(id?'Edit employee':'Add employee',[{k:'n',l:'Full name',v:e.n},{k:'pos',l:'Position',v:e.pos},{k:'u',l:'Unit',t:'select',o:[['g','Taifa Gas'],['y','Yas & Mixx'],['b','Shared / head office']],v:e.u},{k:'dc',l:'Location',t:'select',o:[['HQ','Tabora HQ']].concat(DC.map(x=>[x,x])),v:e.dc},{k:'sal',l:'Monthly salary (TZS)',t:'number',v:e.sal},{k:'sd',l:'Start date',t:'date',v:e.sd},{k:'st',l:'Status',t:'select',o:['Active','On leave','Exited'].map(x=>[x,x]),v:e.st}],v=>{if(!v.n)return 'Name is required';const o=Object.assign({},v,{id:e.id||'E'+Date.now(),sal:+v.sal||0});if(id)S.emp[S.emp.findIndex(x=>x.id==id)]=o;else S.emp.push(o)})}
+const del=(k,id)=>{if(confirm('Delete this record?')){S[k]=S[k].filter(x=>x.id!=id);save();render()}};
+const jr=(f,t)=>S.jn.filter(j=>(!f||j.d>=f)&&j.d<=t&&(UN=='all'||j.u==UN)),nb=(c,l)=>l.reduce((s,j)=>s+(j.dr==c?j.a:0)-(j.cr==c?j.a:0),0),rows=(ty,sg,l)=>COA.filter(a=>a[2]==ty).map(a=>[AN(a[0]),sg*nb(a[0],l)]),R2=a=>a.map(r=>[r[0],fmt(r[1])]),tot=(n,v)=>['<b>'+n+'</b>','<b>'+fmt(v)+'</b>'];
+Object.assign(P,{
+prod(){const ps=S.prod.filter(p=>vis(p.u));return `<div class="sbt"><button class="p" onclick="prodForm()">+ Add product</button></div><div class="f">Products and services for each unit with selling price and cost. Yas/Mixx items are services (e.g. Wakala registration, float top-up fee); only commission is income, not turnover. Price changes should go through a “Price change” approval.</div><div class="card"><h3>Product &amp; price list</h3>${tbl(['Unit','Product / service','Size / pack','Price (TZS)','Cost (TZS)','Margin','Reorder level',''],ps.map(p=>[UL[p.u],esc(p.n),esc(p.sz),fmt(p.price),fmt(p.cost),fmt(p.price-p.cost),p.min,cw(p.u)?`<button class="s" onclick="prodForm('${p.id}')">Edit</button> <button class="s d" onclick="del('prod','${p.id}')">Delete</button>`:'']))}</div>`},
+inv(){const ps=S.prod.filter(p=>vis(p.u)),mv=S.inv.filter(m=>vis(pr(m.p).u)).reverse().slice(0,30);return `<div class="sbt"><button class="p" onclick="mvForm()">+ Stock movement</button></div><div class="card"><h3>Stock by distribution centre (Tabora districts)</h3>${ps.length?'':'<p class="note">Add products first.</p>'}${tbl(['Distribution centre'].concat(ps.map(p=>esc(p.n+' '+(p.sz||''))+'<br><span class="note">'+UL[p.u]+' · min '+p.min+'</span>')),DC.map(d=>[d].concat(ps.map(p=>{const q=stock(d,p.id);return `<span class="${q<p.min?'r':''}">${fmt(q)}</span>`}))))}<p class="note">Red = below reorder level. Count adjustments count only after approval.</p></div><div class="card"><h3>Recent movements</h3>${tbl(['Date','Centre','Product','Type','Qty','Ref','Status'],mv.map(m=>[m.d,m.dc,esc(pr(m.p).n),m.ty,fmt(m.q),esc(m.ref),m.st=='ok'?'<span class="tag g">Posted</span>':m.st=='pend'?'<span class="tag o">Awaiting approval</span>':'<span class="tag r">Rejected</span>']))}</div>`},
+rt(){const rs=S.rt.filter(r=>vis(r.u));return `<div class="sbt"><button class="p" onclick="rtForm()">+ Add route</button></div><div class="card"><h3>Route plan – all units</h3>${tbl(['Unit','Route','From centre','Stops','Vehicle','Driver / officer','Frequency','km',''],rs.map(r=>[UL[r.u],esc(r.n),r.dc,`<span style="white-space:normal">${esc(r.stops)}</span>`,esc(r.veh),esc(r.drv),esc(r.day),fmt(r.km),cw(r.u)?`<button class="s" onclick="rtForm('${r.id}')">Edit</button> <button class="s d" onclick="del('rt','${r.id}')">Delete</button>`:'']))}</div><div class="card"><h3>Coverage by distribution centre</h3>${tbl(['Centre','Gas routes','Yas/Mixx routes'],DC.map(d=>[d].concat(['g','y'].map(u=>{const n=S.rt.filter(r=>r.dc==d&&r.u==u).length;return n?n:'<span class="o">No route planned</span>'}))))}</div>`},
+wf(){const q=S.ap.map((a,i)=>[a,i]).filter(([a])=>vis(a.u)).reverse();return `<div class="sbt"><button class="p" onclick="apForm()">+ New request</button></div><div class="card"><h3>Approval levels</h3>${tbl(['Request type','Level 1 – Initiator','Approval chain'],Object.keys(CH).map(t=>[t,'Any user / unit staff',CH[t].map((r,i)=>(i+1)+'. '+(r=='u'?'Unit manager (Regional Gas / Yas-Mixx)':R[r])+(r=='md'&&t=='Payment'?' (≥ TZS '+fmt(LIM)+')':'')).join(' → ')]))}</div><div class="card"><h3>Requests</h3>${tbl(['#','Type','Unit','Description','Amount','By','Stage','History',''],q.map(([a,i])=>{const c=ch(a);return[a.id,a.t,UL[a.u],`<span style="white-space:normal">${esc(a.desc)}</span>`,a.amt?fmt(a.amt):'—',R[a.by],a.st=='Pending'?`<span class="tag o">Level ${a.step+1}/${c.length}: ${R[c[a.step]]}</span>`:`<span class="tag ${a.st=='Approved'?'g':'r'}">${a.st}</span>`,`<span class="note" style="white-space:normal">${esc(a.h.join('; ')||a.d)}</span>`,a.st=='Pending'&&(ME==c[a.step]||ME=='md')&&ME!=a.by?`<button class="s p" onclick="apDo(${i},1)">Approve</button> <button class="s d" onclick="apDo(${i},0)">Reject</button>`:'']}))}</div>`},
+acc(){const l=jr('','9999').reverse().slice(0,100);return `<div class="sbt">${['acc','md','gfm'].includes(ME)?'<button class="p" onclick="jnForm()">+ Journal entry</button> ':''}<button onclick="apForm(\'Payment\')">Request payment</button></div><div class="f">Double-entry ledger. Statements (Income statement, Balance sheet, Trial balance, Cash flow) are in Reports. Record Yas/Mixx commission income only – not turnover.</div><div class="card"><h3>General journal</h3>${tbl(['Date','Unit','Debit','Credit','Amount','Narration','By'],l.map(j=>[j.d,UL[j.u],AN(j.dr),AN(j.cr),fmt(j.a),esc(j.n),R[j.by]]))}</div>`},
+hr(){const e=S.emp,ac=e.filter(x=>x.st!='Exited'),ed=ME=='hr'||ME=='md';return `<div class="sbt">${ed?'<button class="p" onclick="empForm()">+ Add employee</button> ':''}<button onclick="apForm('Leave / HR')">Leave / HR request</button></div><div class="grid">${kpi('Staff on payroll',ac.length)+kpi('Monthly payroll (TZS)',fmt(T(ac.map(x=>[0,x.sal]))))}</div><div class="card"><h3>Employees</h3>${tbl(['Name','Position','Unit','Location','Salary','Start','Status',''],e.map(x=>[esc(x.n),esc(x.pos),x.u=='b'?'Shared':UL[x.u],x.dc,fmt(x.sal),x.sd,x.st,ed?`<button class="s" onclick="empForm('${x.id}')">Edit</button> <button class="s d" onclick="del('emp','${x.id}')">Delete</button>`:'']))}</div><div class="card"><h3>Headcount by location</h3>${tbl(['Location','Active staff'],['HQ'].concat(DC).map(d=>[d,ac.filter(x=>x.dc==d).length]))}</div>`}});
+const AC=['md','gfm','acc','trc','ia'],RN={is:'Income statement',bs:'Balance sheet',tb:'Trial balance',cf:'Cash flow statement',inv:'Stock position',ops:'Operations returns summary',hr:'Payroll & headcount'},RA={is:AC,bs:AC,tb:AC,cf:AC,inv:AC.concat('rgm','ymm'),ops:Object.keys(R).filter(k=>k!='hr'),hr:['hr','md','gfm']};
+let RP={f:S.asat.slice(0,8)+'01',t:S.asat,r:'is'};
+const Rb={
+is(){const l=jr(RP.f,RP.t),I=rows('I',-1,l),X=rows('X',1,l);return tbl(['Item','TZS'],R2(I).concat([tot('Total income',T(I))],R2(X),[tot('Total expenses',T(X)),tot('Net surplus / (deficit)',T(I)-T(X))]))},
+bs(){const l=jr('',RP.t),A=rows('A',1,l),B=rows('L',-1,l),E=rows('E',-1,l),n=T(rows('I',-1,l))-T(rows('X',1,l)),ta=T(A),tl=T(B)+T(E)+n;return tbl(['Item','TZS'],R2(A).concat([tot('Total assets',ta)],R2(B),R2(E),[['Current earnings',fmt(n)],tot('Total liabilities & equity',tl),['Check (should be 0)',fmt(ta-tl)]]))},
+tb(){const l=jr('',RP.t),r=COA.map(a=>[AN(a[0]),nb(a[0],l)]);return tbl(['Account','Debit','Credit'],r.map(x=>[x[0],x[1]>0?fmt(x[1]):'',x[1]<0?fmt(-x[1]):'']).concat([['<b>Total</b>','<b>'+fmt(T(r.filter(x=>x[1]>0)))+'</b>','<b>'+fmt(-T(r.filter(x=>x[1]<0)))+'</b>']]))},
+cf(){const cs=['1000','1100'],cash=l=>nb('1000',l)+nb('1100',l),op=cash(S.jn.filter(j=>j.d<RP.f&&(UN=='all'||j.u==UN))),m={};jr(RP.f,RP.t).forEach(j=>{const a=cs.includes(j.dr),b=cs.includes(j.cr);if(a!=b){const o=a?j.cr:j.dr;m[o]=(m[o]||0)+(a?j.a:-j.a)}});const r=Object.keys(m).map(k=>[AN(k),m[k]]),n=T(r);return tbl(['Item','TZS'],[['Opening cash, bank & float',fmt(op)]].concat(R2(r),[tot('Net change',n),tot('Closing cash, bank & float',op+n)]))},
+inv(){const ps=S.prod.filter(p=>vis(p.u));return tbl(['Centre'].concat(ps.map(p=>esc(p.n+' '+(p.sz||'')))).concat('Value at cost'),DC.map(d=>[d].concat(ps.map(p=>fmt(stock(d,p.id,RP.t))),fmt(ps.reduce((s,p)=>s+stock(d,p.id,RP.t)*p.cost,0)))))},
+ops(){return tbl(['Business line','Entries','Total logged (unverified)'],L.filter(l=>vis(l.un)).map(l=>{const x=S.ret.filter(r=>r.l==l.id&&r.d>=RP.f&&r.d<=RP.t);return[esc(l.n),x.length,fmt(x.reduce((s,r)=>s+r.v,0))+' '+l.u]}))},
+hr(){const a=S.emp.filter(x=>x.st!='Exited');return tbl(['Name','Position','Location','Salary'],a.map(x=>[esc(x.n),esc(x.pos),x.dc,fmt(x.sal)]).concat([['<b>Total ('+a.length+' staff)</b>','','','<b>'+fmt(T(a.map(x=>[0,x.sal])))+'</b>']]))}};
+P.rep=()=>{const av=Object.keys(RN).filter(k=>RA[k].includes(ME));if(!av.includes(RP.r))RP.r=av[0];return `<div class="card noprint"><h3>Financial statements &amp; reports – print for any period</h3><label>Report <select onchange="RP.r=this.value;render()">${av.map(k=>`<option value="${k}" ${k==RP.r?'selected':''}>${RN[k]}</option>`).join('')}</select></label> <label>From <input type="date" value="${RP.f}" onchange="RP.f=this.value||RP.f;render()"></label> <label>To <input type="date" value="${RP.t}" onchange="RP.t=this.value||RP.t;render()"></label> <button class="p" onclick="window.print()">Print / Save as PDF</button></div><div class="card"><h2 style="margin:0">Taifa Gas &amp; Yas/Mixx – Tabora</h2><h3>${RN[RP.r]}</h3><p class="note">Period ${RP.f} to ${RP.t} · ${UN=='all'?'All units':UL[UN]} · Printed by ${R[ME]}, ${new Date().toLocaleString()} · Management accounts – unaudited</p>${Rb[RP.r]()}</div>`};
+const d0=P.dash;P.dash=()=>{const w=S.ap.filter(a=>a.st=='Pending'&&(ch(a)[a.step]==ME||ME=='md')&&a.by!=ME).length,ls=S.prod.filter(p=>vis(p.u)).reduce((n,p)=>n+DC.filter(d=>stock(d,p.id)<p.min).length,0);return d0()+`<div class="grid">${kpi('Approvals awaiting you',w)+kpi('Low-stock centre lines',ls)+kpi('Products listed',S.prod.length)}</div>`};
+TABS.splice(6,0,['prod','Products & Prices'],['inv','Inventory'],['rt','Route Plan'],['wf','Workflow & Approvals'],['acc','Accounting'],['hr','HR'],['rep','Reports']);
+const TR={hr:['hr','md','gfm'],acc:['acc','md','gfm','trc','ia']};
+function render(){const t=TABS.filter(x=>!TR[x[0]]||TR[x[0]].includes(ME));if(!t.some(x=>x[0]==PG))PG='dash';$('#nav').innerHTML=t.map(x=>`<button class="${PG==x[0]?'on':''}" onclick="PG='${x[0]}';render()">${x[1]}</button>`).join('');$('#main').innerHTML=P[PG]()}
+$('#me').innerHTML=Object.entries(R).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('#me').value=ME;render();
+</script>
+<script type="text/plain" data-app>
+/* ===== Bulk upload (CSV / Excel) ===== */
+const nz=s=>String(s==null?'':s).toLowerCase().replace(/[^a-z0-9]/g,''),num=x=>+String(x).replace(/,/g,''),un=s=>/^(y|yas|mixx)/i.test(s)?'y':/^(g|gas|taifa)/i.test(s)?'g':null,dcm=s=>DC.find(d=>nz(d)==nz(s)),dtOk=s=>/^\d{4}-\d\d-\d\d$/.test(s);
+let bn=0;const bid=p=>p+Date.now()+(bn++);
+const BK={
+prod:{n:'Products & prices',h:['unit','name','size','price','cost','reorder'],x:['Gas','LPG cylinder','13 kg',60000,45000,20],add:r=>{const u=un(r.unit);if(!u||!cw(u))return 'unit invalid or not permitted';if(!r.name||isNaN(num(r.price)))return 'name/price missing';S.prod.push({id:bid('P'),u,n:r.name,sz:r.size,price:num(r.price),cost:num(r.cost)||0,min:num(r.reorder)||0})}},
+inv:{n:'Stock movements',h:['date','centre','product','type','qty','ref'],x:['2026-11-14','Igunga','LPG cylinder','Receipt',100,'GRN-001'],add:r=>{const p=S.prod.find(x=>nz(x.n+x.sz)==nz(r.product))||S.prod.find(x=>nz(x.n)==nz(r.product)),d=dcm(r.centre),t=String(r.type),q=num(r.qty);if(!p)return 'product not found – add it first';if(!cw(p.u))return 'not permitted for this unit';if(!d)return 'centre not recognised';if(!dtOk(r.date)||!q)return 'date (YYYY-MM-DD) or qty invalid';const ty=/^rec/i.test(t)?'Receipt':/^ret/i.test(t)?'Return':/^(iss|del)/i.test(t)?'Issue / delivery':/^(c|adj)/i.test(t)?'Count adjustment (needs approval)':null;if(!ty)return 'type must be Receipt, Issue, Return or Adjustment';const ad=ty[0]=='C',m={id:bid('M'),d:r.date,dc:d,p:p.id,ty,q:ty[0]=='I'?-Math.abs(q):ad?q:Math.abs(q),ref:r.ref,st:ad?'pend':'ok',by:ME};S.inv.push(m);if(ad)S.ap.push(mkAp('Stock adjustment',p.u,'Adjust '+q+' × '+p.n+' at '+d+' ('+(r.ref||'bulk')+')',Math.abs(q)*p.cost,m.id))}},
+emp:{n:'Employees',h:['name','position','unit','location','salary','start','status'],x:['Asha Juma','Accountant','Shared','HQ',900000,'2026-01-05','Active'],add:r=>{if(ME!='hr'&&ME!='md')return 'only HR / MD can import staff';const dc=/^hq/i.test(r.location)?'HQ':dcm(r.location);if(!r.name||!dc)return 'name or location invalid';S.emp.push({id:bid('E'),n:r.name,pos:r.position,u:/^(b|shared|hq)/i.test(r.unit)?'b':un(r.unit)||'b',dc,sal:num(r.salary)||0,sd:r.start,st:/^(on|l)/i.test(r.status)?'On leave':/^ex/i.test(r.status)?'Exited':'Active'})}},
+jn:{n:'Journal entries',h:['date','unit','debit','credit','amount','narration'],x:['2026-11-14','Gas','1000','4000',500000,'Cash sales'],add:r=>{if(!['acc','md','gfm'].includes(ME))return 'only Accountant / MD / GFM can import journals';const u=un(r.unit),a=num(r.amount);if(!u||!dtOk(r.date)||!(a>0))return 'unit, date or amount invalid';if(!COA.some(c=>c[0]==r.debit)||!COA.some(c=>c[0]==r.credit)||r.debit==r.credit)return 'account codes invalid';S.jn.push({d:r.date,u,dr:r.debit,cr:r.credit,a,n:r.narration,by:ME})}},
+ret:{n:'Daily returns',h:['date','line','place','value','note'],x:['2026-11-14','gas','Igunga',120,'Cylinders sold'],add:r=>{const l=L.find(x=>x.id==nz(r.line)||nz(x.n)==nz(r.line));if(!l)return 'line must be gas, yas, wak, pri or rec';if(!can(l.o))return 'not permitted for this line';if(!dtOk(r.date)||isNaN(num(r.value)))return 'date or value invalid';S.ret.push({d:r.date,l:l.id,p:r.place,v:num(r.value),n:r.note,by:ME})}},
+rt:{n:'Routes',h:['unit','name','centre','stops','vehicle','driver','frequency','km'],x:['Gas','Igunga–Nzega','Igunga','"Igunga, Choma, Nzega"','T123 ABC','Juma','Mon/Thu',95],add:r=>{const u=un(r.unit),d=dcm(r.centre);if(!u||!cw(u)||!d||!r.name)return 'unit, centre or name invalid / not permitted';S.rt.push({id:bid('R'),u,n:r.name,dc:d,stops:r.stops,veh:r.vehicle,drv:r.driver,day:r.frequency,km:num(r.km)||0})}}};
+function csv(t){const o=[];let r=[],c='',q=0;t=t.replace(/^\uFEFF/,'');for(let i=0;i<t.length;i++){const h=t[i];if(q){if(h=='"'){if(t[i+1]=='"'){c+='"';i++}else q=0}else c+=h}else if(h=='"')q=1;else if(h==',' ){r.push(c);c=''}else if(h=='\n'||h=='\r'){if(h=='\r'&&t[i+1]=='\n')i++;r.push(c);o.push(r);r=[];c=''}else c+=h}r.push(c);o.push(r);return o.filter(x=>x.some(y=>String(y).trim()))}
+const xl=()=>window.XLSX?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';s.onload=ok;s.onerror=()=>no(new Error('Excel reader could not load – save the file as CSV'));document.head.appendChild(s)});
+let BS={t:'prod',log:''};
+async function bkRun(inp){const k=BK[BS.t],out=[];for(const f of inp.files){let rows;try{if(/\.csv$/i.test(f.name))rows=csv(await f.text());else{await xl();const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:false,dateNF:'yyyy-mm-dd',defval:''})}}catch(e){out.push(f.name+': '+e.message);continue}
+const hd=(rows[0]||[]).map(nz),miss=k.h.filter(h=>!hd.includes(h));if(miss.length){out.push(f.name+': missing columns '+miss.join(', '));continue}
+let ok=0;const er=[];rows.slice(1).forEach((r,i)=>{if(!r.some(x=>String(x).trim()))return;const o={};hd.forEach((h,j)=>o[h]=String(r[j]==null?'':r[j]).trim());const e=k.add(o);if(e)er.push('  row '+(i+2)+': '+e);else ok++});out.push(f.name+': '+ok+' imported, '+er.length+' rejected'+(er.length?'\n'+er.slice(0,20).join('\n'):''))}
+BS.log=k.n+' – '+S.asat+'\n'+out.join('\n');save();render()}
+function bkTpl(){const k=BK[BS.t],a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(k.h.join(',')+'\n'+k.x.join(',')+'\n');a.download='template_'+BS.t+'.csv';document.body.appendChild(a);a.click();a.remove()}
+P.bulk=()=>`<div class="card"><h3>Bulk file upload</h3><div class="f">Upload one or many CSV or Excel (.xlsx) files at once. The first row must hold the column names. Each row is checked against your role permissions and bad rows are rejected with a reason. Dates use YYYY-MM-DD.</div><label>Data type <select onchange="BS.t=this.value;render()">${Object.keys(BK).map(x=>`<option value="${x}" ${x==BS.t?'selected':''}>${BK[x].n}</option>`).join('')}</select></label> <button onclick="bkTpl()">Download CSV template</button><p class="note">Columns: ${BK[BS.t].h.join(', ')}</p><input type="file" multiple accept=".csv,.xlsx,.xls" onchange="bkRun(this)"></div><div class="card"><h3>Result</h3><pre style="white-space:pre-wrap;margin:0">${esc(BS.log||'No file imported yet.')}</pre></div>`;
+TABS.splice(TABS.length-1,0,['bulk','Bulk Upload']);
+
+/* ===== Kiswahili ===== */
+const SW={};`Taifa Gas & Yas/Mixx – Management System|Taifa Gas & Yas/Mixx – Mfumo wa Usimamizi
+Tabora · Separate system for the Gas and Yas/Mixx business units|Tabora · Mfumo tofauti kwa vitengo vya Gesi na Yas/Mixx
+Unit|Kitengo
+View as|Tazama kama
+As at|Hadi tarehe
+Theme|Mwonekano
+All units|Vitengo vyote
+MD / Board|MD / Bodi
+Group Finance Manager|Meneja Mkuu wa Fedha wa Kikundi
+Treasury Controller|Mdhibiti wa Hazina
+Regional Gas Manager|Meneja wa Gesi wa Mkoa
+Yas/Mixx Manager|Meneja wa Yas/Mixx
+Wakala Development Manager|Meneja Maendeleo ya Wakala
+Internal Auditor|Mkaguzi wa Ndani
+Accountant|Mhasibu
+HR Manager|Meneja Rasilimali Watu
+Dashboard|Dashibodi
+Scorecard|Kadi ya Alama
+Daily Returns|Ripoti za Kila Siku
+Action Plan|Mpango wa Hatua
+Monthly MI Pack|Kifurushi cha Taarifa za Mwezi
+Risk Register|Rejista ya Hatari
+Products & Prices|Bidhaa na Bei
+Inventory|Bidhaa Stoo
+Route Plan|Mpango wa Njia
+Workflow & Approvals|Mtiririko na Idhini
+Accounting|Uhasibu
+HR|Rasilimali Watu
+Reports|Ripoti
+Bulk Upload|Pakia kwa Wingi
+Backup|Hifadhi Nakala
+Business-line status|Hali ya mistari ya biashara
+Overdue actions|Hatua zilizochelewa
+Business-line scorecard|Kadi ya alama ya biashara
+Definitions|Maana za istilahi
+Management action plan|Mpango wa hatua za menejimenti
+Priority risk and internal-control register|Rejista ya hatari na udhibiti wa ndani
+Lines with verified actuals|Mistari yenye takwimu halisi zilizothibitishwa
+Actions overdue|Hatua zilizochelewa
+Risk controls evidenced|Udhibiti wa hatari wenye ushahidi
+Approvals awaiting you|Idhini zinazokusubiri
+Low-stock centre lines|Vituo vyenye stoo ndogo
+Products listed|Bidhaa zilizoorodheshwa
+Staff on payroll|Wafanyakazi walio kwenye mishahara
+Monthly payroll (TZS)|Mishahara ya mwezi (TZS)
+Business line|Mstari wa biashara
+Owner|Mmiliki
+Target|Lengo
+Actual|Halisi
+Achievement|Mafanikio
+Update actual|Sasisha halisi
+Set target|Weka lengo
+Action|Hatua
+Deadline|Tarehe ya mwisho
+Status|Hali
+Note|Maelezo
+Description|Maelezo
+Date|Tarehe
+Line|Mstari
+Value|Thamani
+Amount|Kiasi
+By|Na
+Type|Aina
+Name|Jina
+Position|Cheo
+Location|Mahali
+Salary|Mshahara
+Start|Kuanza
+History|Historia
+Stage|Ngazi
+Qty|Idadi
+Ref|Kumb.
+Margin|Faida
+Unit|Kitengo
+Product|Bidhaa
+Centre|Kituo
+Active|Hai
+On leave|Likizo
+Exited|Ameondoka
+Posted|Imewekwa
+Awaiting approval|Inasubiri idhini
+Rejected|Imekataliwa
+Approved|Imeidhinishwa
+Submitted|Imewasilishwa
+Outstanding|Inasubiriwa
+Verified|Imethibitishwa
+Open|Wazi
+In progress|Inaendelea
+Save|Hifadhi
+Cancel|Ghairi
+Edit|Hariri
+Delete|Futa
+Update|Sasisha
+Approve|Idhinisha
+Reject|Kataa
+Export data|Hamisha data
+Erase everything|Futa kila kitu
++ Add product|+ Ongeza bidhaa
++ Stock movement|+ Mwendo wa stoo
++ Add route|+ Ongeza njia
++ New request|+ Ombi jipya
++ Journal entry|+ Ingizo la jarida
++ Add employee|+ Ongeza mfanyakazi
++ Daily return|+ Ripoti ya siku
++ Add action|+ Ongeza hatua
+Request payment|Omba malipo
+Leave / HR request|Ombi la likizo / Rasilimali Watu
+Print / Save as PDF|Chapisha / Hifadhi PDF
+Download CSV template|Pakua kiolezo cha CSV
+Product & price list|Orodha ya bidhaa na bei
+Product / service name|Jina la bidhaa / huduma
+Size / pack|Ukubwa / pakiti
+Size / pack / unit of sale|Ukubwa / pakiti / kipimo cha mauzo
+Price (TZS)|Bei (TZS)
+Cost (TZS)|Gharama (TZS)
+Reorder level|Kiwango cha kuagiza upya
+Selling price (TZS)|Bei ya kuuza (TZS)
+Unit cost (TZS)|Gharama kwa kipimo (TZS)
+Reorder level (qty per centre)|Kiwango cha kuagiza upya (kwa kituo)
+Business unit|Kitengo cha biashara
+Add product|Ongeza bidhaa
+Edit product|Hariri bidhaa
+Stock movement|Mwendo wa stoo
+Distribution centre|Kituo cha usambazaji
+Stock by distribution centre (Tabora districts)|Stoo kwa kituo cha usambazaji (wilaya za Tabora)
+Recent movements|Mienendo ya karibuni
+Receipt|Mapokezi
+Issue / delivery|Utoaji / uwasilishaji
+Return|Marejesho
+Count adjustment (needs approval)|Marekebisho ya hesabu (yanahitaji idhini)
+Quantity (adjustment: use − for shortage)|Idadi (marekebisho: tumia − kwa upungufu)
+Reference (GRN, delivery note, count sheet)|Kumbukumbu (GRN, hati ya uwasilishaji, karatasi ya hesabu)
+Red = below reorder level. Count adjustments count only after approval.|Nyekundu = chini ya kiwango cha kuagiza upya. Marekebisho ya hesabu huhesabiwa baada ya idhini tu.
+Add products first.|Ongeza bidhaa kwanza.
+Route plan – all units|Mpango wa njia – vitengo vyote
+Coverage by distribution centre|Ufikiaji kwa kituo cha usambazaji
+Route name|Jina la njia
+Starts from centre|Inaanzia kituo
+Stops (towns, wards, outlets in order)|Vituo vya njiani (miji, kata, maduka kwa mpangilio)
+Vehicle / rider|Gari / mwendesha
+Driver / officer|Dereva / afisa
+Days / frequency|Siku / mara ngapi
+Distance (km)|Umbali (km)
+Add route|Ongeza njia
+Edit route|Hariri njia
+From centre|Kutoka kituo
+Stops|Vituo vya njiani
+Vehicle|Gari
+Driver / officer|Dereva / afisa
+Frequency|Mara ngapi
+Gas routes|Njia za gesi
+Yas/Mixx routes|Njia za Yas/Mixx
+Approval levels|Ngazi za idhini
+Request type|Aina ya ombi
+Level 1 – Initiator|Ngazi ya 1 – Muombaji
+Approval chain|Mlolongo wa idhini
+Requests|Maombi
+New approval request|Ombi jipya la idhini
+Amount (TZS, if any)|Kiasi (TZS, kama kipo)
+Payment|Malipo
+Stock adjustment|Marekebisho ya stoo
+Price change|Mabadiliko ya bei
+Journal / adjustment|Jarida / marekebisho
+Leave / HR|Likizo / Rasilimali Watu
+Route / centre change|Mabadiliko ya njia / kituo
+General journal|Jarida kuu
+Journal entry|Ingizo la jarida
+Debit|Debiti
+Credit|Krediti
+Debit account|Akaunti ya debiti
+Credit account|Akaunti ya krediti
+Amount (TZS)|Kiasi (TZS)
+Narration|Maelezo ya ingizo
+Narration / source document|Maelezo / hati chanzo
+Narration / source document|Maelezo / hati chanzo
+Employees|Wafanyakazi
+Add employee|Ongeza mfanyakazi
+Edit employee|Hariri mfanyakazi
+Full name|Jina kamili
+Monthly salary (TZS)|Mshahara wa mwezi (TZS)
+Start date|Tarehe ya kuanza
+Headcount by location|Idadi ya wafanyakazi kwa mahali
+Active staff|Wafanyakazi hai
+Location|Mahali
+Financial statements & reports – print for any period|Taarifa za fedha na ripoti – chapisha kwa kipindi chochote
+Report|Ripoti
+From|Kuanzia
+To|Hadi
+Income statement|Taarifa ya Mapato na Matumizi
+Balance sheet|Mizania ya Hesabu
+Trial balance|Mizania ya Majaribio
+Cash flow statement|Taarifa ya Mtiririko wa Fedha
+Stock position|Hali ya Stoo
+Operations returns summary|Muhtasari wa ripoti za uendeshaji
+Payroll & headcount|Mishahara na idadi ya wafanyakazi
+Item|Kipengele
+Total income|Jumla ya mapato
+Total expenses|Jumla ya matumizi
+Net surplus / (deficit)|Ziada / (upungufu) halisi
+Total assets|Jumla ya mali
+Total liabilities & equity|Jumla ya madeni na mtaji
+Current earnings|Mapato ya sasa
+Check (should be 0)|Ukaguzi (inapaswa kuwa 0)
+Total|Jumla
+Opening cash, bank & float|Fedha mwanzo (taslimu, benki na float)
+Net change|Badiliko halisi
+Closing cash, bank & float|Fedha mwisho (taslimu, benki na float)
+Value at cost|Thamani kwa gharama
+Account|Akaunti
+Bulk file upload|Upakiaji wa mafaili kwa wingi
+Data type|Aina ya data
+Result|Matokeo
+No file imported yet.|Hakuna faili lililopakiwa bado.
+Backup|Hifadhi nakala
+Nothing here yet.|Hakuna kitu bado.
+Double-entry ledger. Statements (Income statement, Balance sheet, Trial balance, Cash flow) are in Reports. Record Yas/Mixx commission income only – not turnover.|Leja ya uhasibu wa kuingiza mara mbili. Taarifa za fedha ziko kwenye Ripoti. Rekodi mapato ya kamisheni ya Yas/Mixx pekee – si mauzo ghafi.
+Upload one or many CSV or Excel (.xlsx) files at once. The first row must hold the column names. Each row is checked against your role permissions and bad rows are rejected with a reason. Dates use YYYY-MM-DD.|Pakia mafaili moja au mengi ya CSV au Excel (.xlsx) kwa pamoja. Safu ya kwanza iwe na majina ya nguzo. Kila safu hukaguliwa kulingana na ruhusa ya jukumu lako; safu mbovu hukataliwa na sababu. Tarehe: YYYY-MM-DD.`.split('\n').forEach(l=>{const i=l.indexOf('|');SW[l.slice(0,i)]=l.slice(i+1)});
+['Fedha taslimu na benki','Fedha za float (huduma za simu)','Wadaiwa','Bidhaa stoo','Vifaa na magari','Wadai','Mikopo','Mtaji wa mmiliki','Mauzo ya gesi','Mapato ya kamisheni (Yas/Mixx)','Gharama ya gesi iliyouzwa','Mishahara','Usafiri na mafuta','Kodi na huduma','Gharama nyingine'].forEach((s,i)=>SW[COA[i][0]+' '+COA[i][1]]=COA[i][0]+' '+s);
+function tw(){const sw=S.lang=='sw',w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let x;while(x=w.nextNode()){if(x.__o==null)x.__o=x.nodeValue;const t=x.__o.trim(),n=sw&&SW[t]?x.__o.replace(t,SW[t]):x.__o;if(x.nodeValue!=n)x.nodeValue=n}}
+new MutationObserver(tw).observe(document.body,{childList:true,subtree:true});
+const lg=()=>{$('#lg').textContent=S.lang=='sw'?'English':'Kiswahili';document.documentElement.lang=S.lang=='sw'?'sw':'en'};
+$('#lg').onclick=()=>{S.lang=S.lang=='sw'?'en':'sw';save();lg();tw()};
+lg();render();tw();
+</script>
+<script type="text/plain" data-app>
+/* ===== Sales module: dual pricing, sales persons, goods position, period reports ===== */
+Object.assign(R,{rsp:'Route Sales Person',ssp:'Shop Sales Person',po:'Procurement Officer'});
+['sl','al','spu'].forEach(k=>S[k]=S[k]||[]);
+const isSP=()=>ME=='rsp'||ME=='ssp',TYL={r:'Route Sales Person',s:'Shop Sales Person'},PTL={s:'Stockist price',r:'Route price'},NZ=Object.keys(R).filter(k=>!['rsp','ssp'].includes(k));
+let SPID='',GP={f:'',t:'',k:'m'};
+const pS=p=>p.stk!=null?p.stk:p.price,pRt=p=>p.rte!=null?p.rte:p.price,pp=(p,t)=>t=='s'?pS(p):pRt(p),me=()=>S.spu.find(x=>x.id==SPID),nm=id=>id?(S.spu.find(x=>x.id==id)||{n:'?'}).n:'Manager',sq=l=>l.reduce((n,x)=>n+x.q,0),sm=(r,i)=>r.reduce((n,x)=>n+x[i],0),sv=l=>l.reduce((n,x)=>n+x.v,0);
+const ad=(s,n)=>{const d=new Date(s+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)};
+function gp(k){const a=S.asat,d=new Date(a+'T00:00:00Z');GP.k=k;if(k=='d')GP.f=GP.t=a;else if(k=='w'){GP.f=ad(a,-((d.getUTCDay()+6)%7));GP.t=ad(GP.f,6)}else{GP.f=a.slice(0,8)+'01';d.setUTCMonth(d.getUTCMonth()+1,0);GP.t=d.toISOString().slice(0,10)}}gp('m');
+const sls=(f,t,fn)=>S.sl.filter(x=>x.d>=f&&x.d<=t&&(!fn||fn(x)));
+function posP(id,p,f,t){const a=S.al.filter(x=>x.sp==id&&x.p==p),s=S.sl.filter(x=>x.sp==id&&x.p==p),op=sq(a.filter(x=>x.d<f))-sq(s.filter(x=>x.d<f)),ai=a.filter(x=>x.d>=f&&x.d<=t),ad_=sq(ai.filter(x=>x.q>0)),ou=-sq(ai.filter(x=>x.q<0)),so=sq(s.filter(x=>x.d>=f&&x.d<=t));return{op,ad:ad_,ou,av:op+ad_,so,rm:op+ad_-ou-so}}
+function posD(dc,p,f,t){const m=S.inv.filter(x=>x.dc==dc&&x.p==p&&x.st=='ok'&&!x.al),ex=S.al.filter(x=>x.dc==dc&&x.p==p&&x.pa=='fc'),s=S.sl.filter(x=>x.dc==dc&&x.p==p),w=s.filter(x=>x.sp),h=d=>sq(m.filter(x=>x.d<=d))+sq(ex.filter(x=>x.d<=d))-sq(w.filter(x=>x.d<=d)),pi=m.filter(x=>x.d>=f&&x.d<=t),ei=ex.filter(x=>x.d>=f&&x.d<=t),op=h(ad(f,-1)),ad_=sq(pi.filter(x=>x.q>0))+sq(ei.filter(x=>x.q>0));return{op,ad:ad_,av:op+ad_,so:sq(s.filter(x=>x.d>=f&&x.d<=t)),ou:-sq(pi.filter(x=>x.q<0&&x.ty!='Sale'))-sq(ei.filter(x=>x.q<0)),rm:h(t)}}
+function posRows(sp,f,t){const ps=S.prod.filter(p=>vis(p.u)&&(!sp||p.u==sp.u)),r=[];(sp?[sp.dc]:DC).forEach(d=>ps.forEach(p=>{const z=sp?posP(sp.id,p.id,f,t):posD(d,p.id,f,t);if(z.op||z.ad||z.so||z.rm||z.ou)r.push([d,pl(p),z.op,z.ad,z.av,z.so,z.rm,sv(sls(f,t,x=>x.p==p.id&&(sp?x.sp==sp.id:x.dc==d))),z.ou||0])}));return r}
+const goods=(sp,f,t)=>{const r=posRows(sp,f,t),b=x=>'<b>'+fmt(x)+'</b>';return `<div class="grid">${kpi('Opening balance',fmt(sm(r,2)),'units at start')+kpi('Added goods',fmt(sm(r,3)),'received / issued in')+kpi('Available goods',fmt(sm(r,4)),'opening + added')+kpi('Sold',fmt(sm(r,5)),'TZS '+fmt(sm(r,7)))+kpi('Remaining balance',fmt(sm(r,6)),'at '+t)}</div><div class="card"><h3>Goods position ${f} → ${t}</h3>${tbl(['District','Product','Opening','Added','Available','Sold','Remaining','Sales value (TZS)','Out (returned / transferred / issued)'],r.map(x=>x.map((c,i)=>i>1?fmt(c):esc(c))).concat(r.length?[['<b>Total</b>','',b(sm(r,2)),b(sm(r,3)),b(sm(r,4)),b(sm(r,5)),b(sm(r,6)),b(sm(r,7)),b(sm(r,8))]]:[]))}</div>`};
+const perBar=()=>`<div class="card noprint"><b>Period:</b> ${[['d','Daily'],['w','Weekly'],['m','Monthly']].map(([k,l])=>`<button class="s ${GP.k==k?'p':''}" onclick="gp('${k}');render()">${l}</button>`).join(' ')} <label>From <input type="date" value="${GP.f}" onchange="GP.f=this.value||GP.f;GP.k='c';render()"></label> <label>To <input type="date" value="${GP.t}" onchange="GP.t=this.value||GP.t;GP.k='c';render()"></label> <button class="p" onclick="window.print()">🖨 Print report</button></div>`;
+const head=(t,f,to)=>`<div class="card"><h2 style="margin:0">Taifa Gas &amp; Yas/Mixx – Tabora</h2><h3>${t}</h3><p class="note">Period ${f} to ${to} · ${UN=='all'?'All units':UL[UN]} · ${R[ME]}${isSP()&&me()?' – '+esc(me().n)+', '+me().dc:''} · Printed ${new Date().toLocaleString()}</p></div>`;
+const ledger=(l,x)=>`<div class="card"><h3>Sales ledger</h3>${tbl(['Date','District','Sold by','Product','Price type','Units','Unit price','Value (TZS)','Customer',''],l.map(s=>[s.d,s.dc,esc(nm(s.sp)),esc(pl(pr(s.p))),PTL[s.pt],fmt(s.q),fmt(s.pr),fmt(s.v),esc(s.cu),x&&cw(s.u)?`<button class="s d" onclick="slDel('${s.id}')">Delete</button>`:'']).concat(l.length?[['<b>Total</b>','','','','','<b>'+fmt(sq(l))+'</b>','','<b>'+fmt(sv(l))+'</b>','','']]:[]))}</div>`;
+const summ=(l,np)=>`<div class="card"><h3>Sales by price type</h3>${tbl(['Price type','Units','Value (TZS)'],['s','r'].map(t=>[PTL[t],fmt(sq(l.filter(x=>x.pt==t))),fmt(sv(l.filter(x=>x.pt==t)))]))}</div>`+(np?'':`<div class="card"><h3>Sales by seller</h3>${tbl(['Seller','Type','District','Units','Value (TZS)'],[...new Set(l.map(x=>x.sp))].map(id=>{const u=S.spu.find(x=>x.id==id),z=l.filter(x=>x.sp==id);return[esc(nm(id)),u?TYL[u.ty]:'Manager (direct)',u?u.dc:[...new Set(z.map(x=>x.dc))].join(', '),fmt(sq(z)),fmt(sv(z))]}))}</div>`);
+/* forms */
+function prodForm(id){const p=S.prod.find(x=>x.id==id)||{u:UN=='y'?'y':'g'};form(id?'Edit product':'Add product',[{k:'u',l:'Business unit',t:'select',o:[['g','Taifa Gas'],['y','Yas & Mixx']],v:p.u},{k:'n',l:'Product / service name',v:p.n},{k:'sz',l:'Size / pack / unit of sale',v:p.sz},{k:'stk',l:'Stockist price (TZS)',t:'number',v:p.id?pS(p):''},{k:'rte',l:'Route sale price – final consumer / ordinary buyer (TZS)',t:'number',v:p.id?pRt(p):''},{k:'cost',l:'Unit cost (TZS)',t:'number',v:p.cost},{k:'min',l:'District Store reorder level (qty per centre)',t:'number',v:p.min},{k:'pmin',l:'Minimum stock per sales person (re-issue trigger)',t:'number',v:p.pmin}],v=>{if(!cw(v.u))return 'Your role cannot manage this unit';if(!v.n||v.stk===''||v.rte==='')return 'Name and both prices are required';const o={id:p.id||'P'+Date.now(),u:v.u,n:v.n,sz:v.sz,stk:+v.stk,rte:+v.rte,price:+v.rte,cost:+v.cost||0,min:+v.min||0,pmin:+v.pmin||0};if(id)S.prod[S.prod.findIndex(x=>x.id==id)]=o;else S.prod.push(o)})}
+const a0=BK.prod.add;BK.prod.add=r=>{const e=a0(r);if(!e){const p=S.prod[S.prod.length-1];if(r.stockist)p.stk=num(r.stockist);if(r.route){p.rte=num(r.route);p.price=p.rte}}return e};
+function slCalc(){const p=S.prod.find(x=>x.id==$('#f_p').value),q=+$('#f_q').value||0;if(p){const u=pp(p,$('#f_pt').value);$('#slv').innerHTML=`Unit price <b>${fmt(u)}</b> TZS × ${fmt(q)} units = <b style="font-size:18px">${fmt(u*q)} TZS</b>`}}
+function slForm(){const sp=isSP()?me():null;if(isSP()&&!sp)return alert('Ask a manager to add you in Sales Team first.');const ps=S.prod.filter(p=>vis(p.u)&&(sp?p.u==sp.u:cw(p.u)));if(!ps.length)return alert('No product available to sell for your role / unit.');
+form('Record sale',[{k:'d',l:'Date',t:'date',v:S.asat}].concat(sp?[]:[{k:'dc',l:'District',t:'select',o:DC.map(x=>[x,x])},{k:'by',l:'Sold by',t:'select',o:[['','Manager (direct from district stock)']].concat(S.spu.filter(x=>vis(x.u)).map(x=>[x.id,x.n+' – '+TYL[x.ty]+', '+x.dc]))}],[{k:'p',l:'Product',t:'html',h:`<select id="f_p" onchange="slCalc()">${ps.map(p=>`<option value="${p.id}">${esc(pl(p))}</option>`).join('')}</select>`},{k:'pt',l:'Sell at',t:'html',h:`<select id="f_pt" onchange="slCalc()"><option value="s" ${sp&&sp.ty=='s'?'selected':''}>Stockist price</option><option value="r" ${sp&&sp.ty=='s'?'':'selected'}>Route sale price (final consumer)</option></select>`},{k:'q',l:'Units to sell',t:'html',h:'<input id="f_q" type="number" min="1" oninput="slCalc()">'},{t:'html',h:'<div class="f" id="slv" style="margin-top:8px"></div>'},{k:'cu',l:'Customer / shop (optional)'}]),v=>{const q=+v.q,p=pr(v.p),dc=sp?sp.dc:v.dc,by=sp?sp.id:v.by;if(!v.d||!(q>0))return 'Date and units are required';if(by){const x=S.spu.find(u=>u.id==by);if(x.dc!=dc)return x.n+' works in '+x.dc;if(x.u!=p.u)return 'Product is not in this person\'s unit'}else if(!cw(p.u))return 'Not permitted';const av=by?posP(by,p.id,'0','9999').rm:stock(dc,p.id);if(q>av)return 'Only '+fmt(av)+' units available';const u=pp(p,v.pt),o={id:'S'+Date.now(),d:v.d,u:p.u,p:p.id,dc,sp:by||'',pt:v.pt,q,pr:u,v:q*u,cu:v.cu,by:ME};S.sl.push(o);if(!by)S.inv.push({id:'M'+o.id,d:v.d,dc,p:p.id,ty:'Sale',q:-q,ref:'Sale '+o.id,st:'ok',by:ME,sl:o.id})},'Post & submit sale');slCalc()}
+function slDel(id){if(confirm('Delete this sale and restore the stock?')){S.sl=S.sl.filter(x=>x.id!=id);S.inv=S.inv.filter(m=>m.sl!=id);save();render()}}
+function alForm(){const pe=S.spu.filter(x=>vis(x.u)&&cw(x.u)),ps=S.prod.filter(p=>vis(p.u)&&cw(p.u));if(!pe.length||!ps.length)return alert('Add a sales person and a product first (or your role cannot manage this unit).');form('Issue goods to sales person',[{k:'d',l:'Date',t:'date',v:S.asat},{k:'sp',l:'Sales person',t:'select',o:pe.map(x=>[x.id,x.n+' – '+TYL[x.ty]+', '+x.dc])},{k:'p',l:'Product',t:'select',o:ps.map(p=>[p.id,pl(p)])},{k:'q',l:'Quantity (use − to take back unsold goods)',t:'number'}],v=>{const x=S.spu.find(u=>u.id==v.sp),p=pr(v.p),q=+v.q;if(!v.d||!q)return 'Date and quantity are required';if(x.u!=p.u)return 'Product is not in this person\'s unit';if(q>0&&q>stock(x.dc,p.id))return 'Only '+fmt(stock(x.dc,p.id))+' in stock at '+x.dc;const h=posP(x.id,p.id,'0','9999').rm;if(q<0&&-q>h)return x.n+' holds only '+fmt(h);const id='A'+Date.now();S.al.push({id,d:v.d,sp:x.id,p:p.id,q,dc:x.dc,by:ME,pa:'ms',ty:q>0?'Issued by manager from District Store':'Taken back to District Store'});S.inv.push({id:'M'+id,d:v.d,dc:x.dc,p:p.id,ty:q>0?'Issue / delivery':'Return',q:-q,ref:(q>0?'Issued to ':'Returned by ')+x.n,st:'ok',al:1,by:ME})},'Issue goods')}
+function spForm(id,ty,dc){const e=S.spu.find(x=>x.id==id)||{u:UN=='y'?'y':'g',ty:ty||'r',dc};form(id?'Edit sales person':'Add sales person',[{k:'n',l:'Full name',v:e.n},{k:'ty',l:'Type',t:'select',o:Object.entries(TYL),v:e.ty},{k:'u',l:'Unit',t:'select',o:[['g','Taifa Gas'],['y','Yas & Mixx']],v:e.u},{k:'dc',l:'District',t:'select',o:DC.map(x=>[x,x]),v:e.dc},{k:'ph',l:'Phone',v:e.ph}],v=>{if(!v.n)return 'Name is required';if(!cw(v.u))return 'Your role cannot manage this unit';const o=Object.assign({},v,{id:e.id||'U'+Date.now()});if(id)S.spu[S.spu.findIndex(x=>x.id==id)]=o;else S.spu.push(o)})}
+function spDel(id){if(S.sl.some(x=>x.sp==id)||S.al.some(x=>x.sp==id))return alert('This person has sales or stock records and cannot be deleted.');del('spu',id)}
+/* pages */
+P.prod=()=>{const ps=S.prod.filter(p=>vis(p.u));return `<div class="sbt"><button class="p" onclick="prodForm()">+ Add product</button></div><div class="f">Every product has two selling prices: <b>Stockist price</b> and <b>Route sale price</b> (final consumer / ordinary buyer). Sales persons and managers choose either price when selling.</div><div class="card"><h3>Product &amp; price list</h3>${tbl(['Unit','Product / service','Size / pack','Stockist price','Route price','Cost','Stockist margin','Route margin','Store reorder','Min / sales person',''],ps.map(p=>[UL[p.u],esc(p.n),esc(p.sz),fmt(pS(p)),fmt(pRt(p)),fmt(p.cost),fmt(pS(p)-p.cost),fmt(pRt(p)-p.cost),p.min,p.pmin||0,cw(p.u)?`<button class="s" onclick="prodForm('${p.id}')">Edit</button> <button class="s d" onclick="del('prod','${p.id}')">Delete</button>`:'']))}</div>`};
+P.team=()=>{const l=S.spu.filter(x=>vis(x.u));return `<div class="sbt">${isM()||ME=='rgm'||ME=='ymm'?'<button class="p" onclick="spForm()">+ Add sales person</button>':''}</div><div class="card"><h3>Coverage by district</h3>${tbl(['District','Route sales persons','Shop sales persons'],DC.map(d=>[d].concat(['r','s'].map(t=>(z=>(z.length?z.map(x=>esc(x.n)).join(', '):'<span class="o">None assigned</span>')+(isM()||ME=='rgm'||ME=='ymm'?` <button class="s" onclick="spForm('','${t}','${d}')">+ Assign</button>`:''))(l.filter(x=>x.dc==d&&x.ty==t))))))}</div><div class="card"><h3>Sales persons</h3>${tbl(['Name','Type','Unit','District','Phone','Goods held (units)',''],l.map(x=>[esc(x.n),TYL[x.ty],UL[x.u],x.dc,esc(x.ph),fmt(S.prod.reduce((n,p)=>n+posP(x.id,p.id,'0','9999').rm,0)),cw(x.u)?`<button class="s" onclick="spForm('${x.id}')">Edit</button> <button class="s d" onclick="spDel('${x.id}')">Delete</button>`:'']))}</div>`};
+P.sales=()=>{const sp=isSP()?me():null,mg=!isSP()&&(isM()||ME=='rgm'||ME=='ymm'),l=sls(GP.f,GP.t,x=>vis(x.u)&&(!sp||x.sp==sp.id)).reverse(),al=S.al.filter(x=>x.d>=GP.f&&x.d<=GP.t&&vis(pr(x.p).u)&&(!sp||x.sp==sp.id)).reverse();
+return `<div class="sbt noprint">${sp?spBtns():mg?'<button class="p" onclick="slForm()">+ Post sale</button> ':''}${mg?'<button onclick="alForm()">+ Issue goods to sales person</button>':''}</div>`+perBar()+head('Sales &amp; goods report',GP.f,GP.t)+goods(sp,GP.f,GP.t)+summ(l,sp)+`<div class="card"><h3>Stock movements – received, issued, transferred, returned</h3>${tbl(['Date','Sales person','District','Type','Other party','Product','Qty (+in / −out)','Ref'],al.map(x=>[x.d,esc(nm(x.sp)),x.dc,esc(x.ty||(x.q>0?'Issued by manager':'Taken back')),x.pa=='sp'?esc(nm(x.ot)):x.pa=='fc'?'Final consumer':'District Store',esc(pl(pr(x.p))),fmt(x.q),esc(x.ref)]))}</div>`+ledger(l,!sp)};
+const d1=P.dash;P.dash=()=>{if(isSP()){const sp=me();return sp?`<div class="f">${esc(sp.n)} · ${TYL[sp.ty]} · ${sp.dc} · ${UL[sp.u]}</div>`+'<div class="sbt noprint">'+spBtns()+'</div>'+lowCard(sp)+perBar()+goods(sp,GP.f,GP.t)+summ(sls(GP.f,GP.t,x=>x.sp==sp.id),1)+ledger(sls(GP.f,GP.t,x=>x.sp==sp.id).reverse(),0):'<div class="f">No sales person profile yet. A manager must add you under Sales Team.</div>'}if(ME=='ymm'||ME=='wdm')return d1()+perBar()+ovSum(GP.f,GP.t);return d1()+msAlert()+lowCard()+perBar()+goods(null,GP.f,GP.t)};
+Rb.sal=()=>{const sp=isSP()?me():null,l=sls(RP.f,RP.t,x=>vis(x.u)&&(!sp||x.sp==sp.id)).reverse();return summ(l,sp)+ledger(l,0)};
+Rb.gpos=()=>goods(isSP()?me():null,RP.f,RP.t);
+RN.sal='Sales report (daily / weekly / monthly)';RN.gpos='Goods position (available, added, remaining)';RA.sal=RA.gpos=Object.keys(R).filter(k=>k!='ymm');
+function rpq(k){gp(k);RP.f=GP.f;RP.t=GP.t;render()}
+const rp0=P.rep;P.rep=()=>`<div class="card noprint"><b>Quick period:</b> <button class="s" onclick="rpq('d')">Daily</button> <button class="s" onclick="rpq('w')">Weekly</button> <button class="s" onclick="rpq('m')">Monthly</button> <span class="note">or set From / To below</span></div>`+rp0();
+
+const spBtns=()=>`<button class="p" onclick="slForm()">+ Sell / post sale</button> <button onclick="PG='sales';render()">Sales records</button> <button onclick="stForm('rec')">Receive stock</button> <button onclick="stForm('ret')">Return stock</button> <button onclick="stForm('iss')">Transfer / issue stock</button>`;
+const lowRows=sp=>{const r=[];S.spu.filter(x=>vis(x.u)&&(!sp||x.id==sp.id)).forEach(x=>S.prod.filter(p=>p.u==x.u).forEach(p=>{const h=posP(x.id,p.id,'0','9999').rm,m=p.pmin||0;if(m&&h<m)r.push([x,p,h,m])}));return r};
+const lowCard=sp=>{const r=lowRows(sp);return r.length?`<div class="card" style="border-color:var(--bad)"><h3 class="r">⚠ Below minimum stock – re-issue needed (${r.length})</h3>${tbl(['Sales person','District','Product','Held','Minimum','Shortfall'],r.map(([x,p,h,m])=>[esc(x.n),x.dc,esc(pl(p)),fmt(h),fmt(m),fmt(m-h)]))}</div>`:''};
+function stForm(m){m=m||'rec';const sp=me();if(!sp)return alert('Ask a manager to add you in Sales Team first.');const ps=S.prod.filter(p=>vis(p.u)&&p.u==sp.u),ot=S.spu.filter(x=>x.id!=sp.id&&x.dc==sp.dc&&x.u==sp.u);if(!ps.length)return alert('No products for your unit.');
+form({rec:'Receive stock',ret:'Return stock',iss:'Transfer / issue stock'}[m]+' – '+esc(sp.n),[{k:'d',l:'Date',t:'date',v:S.asat},{k:'pa',l:m=='rec'?'Receive from':m=='ret'?'Return to':'Transfer / issue to',t:'select',o:[['ms','District Store'],['sp','Other Sales Point (same district)'],['fc','Final Consumer']].filter(x=>m!='iss'||x[0]!='ms')},{k:'ot',l:'Other sales point (only if chosen above)',t:'select',o:[['','—']].concat(ot.map(x=>[x.id,x.n+' – '+TYL[x.ty]]))},{k:'p',l:'Product',t:'select',o:ps.map(p=>[p.id,pl(p)])},{k:'q',l:'Quantity',t:'number'},{k:'ref',l:'Reference / reason (GRN, delivery note, receipt no.)'}],v=>{const q=+v.q,p=pr(v.p),i=m=='rec',id='T'+Date.now(),bal=u=>posP(u,p.id,'0','9999').rm;if(!v.d||!(q>0))return 'Date and quantity are required';let o=null;if(v.pa=='sp'){o=S.spu.find(x=>x.id==v.ot);if(!o)return 'Choose the other sales point'}
+if(i&&v.pa=='ms'&&q>stock(sp.dc,p.id))return 'Only '+fmt(stock(sp.dc,p.id))+' in District Store';if(i&&o&&q>bal(o.id))return o.n+' holds only '+fmt(bal(o.id));if(!i&&q>bal(sp.id))return 'You hold only '+fmt(bal(sp.id));
+const T=i?{ms:'Received from District Store',sp:'Received from sales point',fc:'Returned by final consumer'}:{ms:'Returned to District Store',sp:'Transferred to sales point',fc:'Issued to final consumer'},b={id,d:v.d,p:p.id,dc:sp.dc,by:ME,pa:v.pa,ref:v.ref};S.al.push(Object.assign({sp:sp.id,q:i?q:-q,ty:T[v.pa],ot:o?o.id:''},b));if(o)S.al.push(Object.assign({},b,{id:id+'b',sp:o.id,q:i?-q:q,ty:i?'Transferred to sales point':'Received from sales point',ot:sp.id}));if(v.pa=='ms')S.inv.push({id:'M'+id,d:v.d,dc:sp.dc,p:p.id,ty:i?'Issue / delivery':'Return',q:i?-q:q,ref:T.ms+' – '+sp.n,st:'ok',al:1,by:ME})},{rec:'Receive stock',ret:'Return stock',iss:'Transfer / issue'}[m])}
+P.ctl=()=>{const a=S.asat,td=sls(a,a,x=>vis(x.u)),rows=[];S.spu.filter(x=>vis(x.u)).forEach(x=>S.prod.filter(p=>p.u==x.u).forEach(p=>{const h=posP(x.id,p.id,'0','9999').rm,m=p.pmin||0;if(m||h)rows.push([x,p,h,m])}));rows.sort((p,q)=>(p[2]-p[3])-(q[2]-q[3]));
+const need=(d,p)=>rows.filter(r=>r[0].dc==d&&r[1].id==p.id).reduce((n,r)=>n+Math.max(0,r[3]-r[2]),0),st=[];DC.forEach(d=>S.prod.filter(p=>vis(p.u)).forEach(p=>{const s=stock(d,p.id),n=need(d,p);if(s||n||p.min)st.push([d,p,s,p.min,n,Math.max(0,p.min+n-s)])}));
+const tg=(h,m)=>h<=0?'<span class="tag r">Out of stock</span>':m&&h<m?'<span class="tag o">Re-issue</span>':'<span class="tag g">OK</span>';
+return `<div class="sbt noprint">${isM()||ME=='rgm'||ME=='ymm'?'<button class="p" onclick="alForm()">+ Re-issue stock to sales person</button>':''}</div>${msAlert()}<div class="f">Stock control as at ${a}. Sales points re-issue is triggered by the “Minimum stock per sales person” set on each product; District Store uses the product's store reorder level.</div><div class="card"><h3>Overall sales on ${a} – all sales points</h3>${tbl(['District','Seller','Product','Price type','Units','Value (TZS)'],td.map(x=>[x.dc,esc(nm(x.sp)),esc(pl(pr(x.p))),PTL[x.pt],fmt(x.q),fmt(x.v)]).concat(td.length?[['<b>Total</b>','','','','<b>'+fmt(sq(td))+'</b>','<b>'+fmt(sv(td))+'</b>']]:[]))}</div><div class="card"><h3>Sales point stock – minimum level control</h3>${tbl(['Sales person','Type','District','Product','Held','Minimum','Shortfall','Status'],rows.map(([x,p,h,m])=>[esc(x.n),TYL[x.ty],x.dc,esc(pl(p)),fmt(h),fmt(m),fmt(Math.max(0,m-h)),tg(h,m)]))}</div><div class="card"><h3>District Store – re-issue &amp; procurement</h3>${tbl(['District','Product','District Store stock','Store reorder level','Needed to re-issue sales points','To request from Main Stores','Status'],st.map(([d,p,s,m,n,pc])=>[d,esc(pl(p)),fmt(s),fmt(m),fmt(n),`<b>${fmt(pc)}</b>`,tg(s-n,m)]))}<p class="note">To request from Main Stores = reorder level + stock needed for re-issue − stock now in the District Store. Main Stores themselves are managed in the Main Stores tab.</p></div>`};
+TABS.splice(3,0,['ctl','Stock Control']);TR.ctl=['md','gfm','trc','ia','rgm','ymm','acc','po'];RA.inv.push('po');RA.inv=RA.inv.filter(k=>k!='ymm');
+
+/* ===== Main Stores: Tabora Main Store & Nzega Sub Store ===== */
+const MS=['Tabora Main Store','Nzega Sub Store'],ALL=MS.concat(DC);S.rop=S.rop||{};
+const ST=()=>isM()||ME=='rgm'||ME=='po',gasP=()=>S.prod.filter(p=>p.u=='g'&&vis(p.u)),rp=(st,p)=>S.rop[st+'|'+p]||{min:0,max:0};
+function msPos(st,p,f,t){const m=S.inv.filter(x=>x.dc==st&&x.p==p&&x.st=='ok'),i=m.filter(x=>x.d>=f&&x.d<=t),r=rp(st,p),cl=sq(m.filter(x=>x.d<=t));return{op:sq(m.filter(x=>x.d<f)),ri:sq(i.filter(x=>x.q>0)),io:-sq(i.filter(x=>x.q<0)),cl,min:r.min,max:r.max,o:r.min&&cl<=r.min?Math.max(0,(r.max||r.min)-cl):0}}
+const tg0=z=>z.cl<=0?'<span class="tag r">Out of stock</span>':z.min&&z.cl<=z.min?'<span class="tag o">Re-order</span>':'<span class="tag g">OK</span>';
+const msRows=(f,t)=>{const r=[];MS.forEach(st=>gasP().forEach(p=>r.push([st,p,msPos(st,p.id,f,t)])));return r};
+const msAlert=()=>{const r=msRows('0',S.asat).filter(x=>x[2].min&&x[2].cl<=x[2].min);return r.length?`<div class="card" style="border-color:var(--bad)"><h3 class="r">⚠ Main Stores at / below re-order point (${r.length})</h3>${tbl(['Store','Product','Stock','Re-order point','Suggested order from depot'],r.map(([s,p,z])=>[s,esc(pl(p)),fmt(z.cl),fmt(z.min),fmt(z.o)]))}</div>`:''};
+function rcvForm(){const ps=gasP();if(!ST()||!ps.length)return alert(ST()?'Add a Taifa Gas product first.':'Your role cannot receive into Main Stores.');form('Receive from Taifa Gas Depot',[{k:'d',l:'Date',t:'date',v:S.asat},{k:'st',l:'Receiving store',t:'select',o:MS.map(x=>[x,x])},{k:'dep',l:'Taifa Gas Depot (name / location)'},{k:'p',l:'Product',t:'select',o:ps.map(p=>[p.id,pl(p)])},{k:'q',l:'Quantity received',t:'number'},{k:'ref',l:'Delivery note / GRN no.'}],v=>{const q=+v.q;if(!v.d||!(q>0)||!v.dep)return 'Date, depot and quantity are required';S.inv.push({id:'M'+Date.now(),d:v.d,dc:v.st,p:v.p,ty:'Receipt',q,ref:v.ref,st:'ok',by:ME,ms:1,pa:'Depot: '+v.dep})},'Post receipt')}
+function issForm(to,p0,q0){const ps=gasP();if(!ST()||!ps.length)return alert(ST()?'Add a Taifa Gas product first.':'Your role cannot issue from Main Stores.');form('Issue / transfer stock',[{k:'d',l:'Date',t:'date',v:S.asat},{k:'fr',l:'From store / centre',t:'select',o:ALL.map(x=>[x,x]),v:MS[0]},{k:'to',l:'To sub store / distribution centre (district)',t:'select',o:ALL.map(x=>[x,x]),v:to||'Nzega Sub Store'},{k:'p',l:'Product',t:'select',o:ps.map(p=>[p.id,pl(p)]),v:p0},{k:'q',l:'Quantity',t:'number',v:q0},{k:'ref',l:'Delivery note / reference'}],v=>{const q=+v.q,id='X'+Date.now();if(!v.d||!(q>0))return 'Date and quantity are required';if(v.fr==v.to)return 'From and To must differ';if(q>stock(v.fr,v.p))return 'Only '+fmt(stock(v.fr,v.p))+' in '+v.fr;const b={d:v.d,p:v.p,st:'ok',by:ME,tr:id};S.inv.push(Object.assign({id:'M'+id+'o',dc:v.fr,ty:'Issue / delivery',q:-q,ref:v.ref,ms:MS.includes(v.fr)?1:0,pa:'To '+v.to},b),Object.assign({id:'M'+id+'i',dc:v.to,ty:'Receipt',q,ref:'From '+v.fr+(v.ref?' – '+v.ref:''),ms:MS.includes(v.to)?1:0,pa:'From '+v.fr},b))},'Post issue')}
+function ropForm(st,p){const r=rp(st,p);form('Re-order levels – '+esc(st)+', '+esc(pl(pr(p))),[{k:'min',l:'Re-order point (order when stock falls to this level)',t:'number',v:r.min},{k:'max',l:'Target level (order up to)',t:'number',v:r.max}],v=>{if(!ST())return 'Your role cannot set re-order levels';if(+v.max&&+v.max<+v.min)return 'Target must not be below the re-order point';S.rop[st+'|'+p]={min:+v.min||0,max:+v.max||0}})}
+P.mst=()=>{const f=GP.f,t=GP.t,r=msRows(f,t),b=x=>'<b>'+fmt(x)+'</b>',lg=S.inv.filter(m=>m.ms&&m.d>=f&&m.d<=t&&vis(pr(m.p).u)).sort((a,c)=>a.d<c.d?1:-1),gp_=[];DC.forEach(d=>gasP().forEach(p=>{const s=stock(d,p.id);if(p.min&&s<p.min)gp_.push([d,p,s,p.min-s])}));
+return `<div class="sbt noprint">${ST()?'<button class="p" onclick="rcvForm()">+ Receive from Taifa Gas Depot</button> <button onclick="issForm()">+ Issue to sub store / district</button>':''}</div><div class="f">${MS.join(' and ')} receive gas from Taifa Gas Depots and issue to the district sub stores / distribution centres. Set a re-order point and target level for each store and product; an order is suggested when stock reaches the re-order point.</div>`+msAlert()+perBar()+head('Main Stores – stock position &amp; movements',f,t)+`<div class="grid">${MS.map(st=>{const z=r.filter(x=>x[0]==st);return kpi(st,fmt(sm(z.map(x=>[x[2].cl]),0))+' units',z.filter(x=>x[2].min&&x[2].cl<=x[2].min).length+' re-order alert(s)')}).join('')}</div><div class="card"><h3>Stock level &amp; re-order control</h3>${tbl(['Store','Product','Opening','Received','Issued out','Closing stock','Re-order point','Target level','Status','Suggested order',''],r.map(([st,p,z])=>[st,esc(pl(p)),fmt(z.op),fmt(z.ri),fmt(z.io),b(z.cl),fmt(z.min),fmt(z.max),tg0(z),z.o?b(z.o):'—',ST()?`<button class="s" onclick="ropForm('${st}','${p.id}')">Set levels</button>`:'']))}</div><div class="card"><h3>Districts below re-order level (to issue from Main Stores)</h3>${tbl(['District','Product','District stock','Shortfall',''],gp_.map(([d,p,s,n])=>[d,esc(pl(p)),fmt(s),b(n),ST()?`<button class="s p" onclick="issForm('${d}','${p.id}',${n})">Issue</button>`:'']))}</div><div class="card"><h3>Store movements – depot receipts &amp; issues</h3>${tbl(['Date','Store','Movement','Other party','Product','Qty','Reference','By'],lg.map(m=>[m.d,m.dc,m.q>0?'Received':'Issued',esc(m.pa),esc(pl(pr(m.p))),fmt(m.q),esc(m.ref),R[m.by]||'']))}</div>`};
+Rb.mst=()=>{const r=msRows(RP.f,RP.t);return tbl(['Store','Product','Opening','Received','Issued out','Closing','Re-order point','Target','Status','Suggested order'],r.map(([st,p,z])=>[st,esc(pl(p)),fmt(z.op),fmt(z.ri),fmt(z.io),fmt(z.cl),fmt(z.min),fmt(z.max),tg0(z),fmt(z.o)]))};
+RN.mst='Main Stores position & re-order control';RA.mst=['md','gfm','trc','ia','rgm','acc','po'];
+TABS.splice(4,0,['mst','Main Stores']);TR.mst=RA.mst;
+
+const sk=(l,k)=>l.reduce((n,x)=>n+(+x[k]||0),0);
+const rt0=P.rt;P.rt=()=>{const h=rt0();return ME=='ymm'?h.replace(/<div class="card"><h3>Coverage by distribution centre<\/h3>[\s\S]*$/,''):h};
+TR.bak=Object.keys(R).filter(k=>k!='ymm');
+/* ===== Yas & Mixx: field team, priority unserved agents, service desks ===== */
+['yt','ya','pa','sdl'].forEach(k=>S[k]=S[k]||[]);
+const SD=['Tabora','Nzega','Igunga','Nkinga'],YT={f:'Float distribution',s:'Wakala servicing',r:'Wakala recruitment'},YW=()=>can(['ymm','wdm'])||ME=='md',
+lm=t=>{const d=new Date(t+'T00:00:00Z');d.setUTCDate(1);d.setUTCMonth(d.getUTCMonth()-1);return d.toISOString().slice(0,7)},
+yn=id=>(S.yt.find(x=>x.id==id)||{n:id?'?':'District return'}).n,ya=(f,t)=>S.ya.filter(x=>x.d>=f&&x.d<=t),sdl=(f,t)=>S.sdl.filter(x=>x.d>=f&&x.d<=t),
+yOnly=h=>UN=='g'?'<div class="f">This section belongs to Yas &amp; Mixx. Set Unit to Yas &amp; Mixx or All units.</div>':h,
+yBtn=(l,f)=>YW()?`<button class="p" onclick="${f}">${l}</button> `:'';
+function ytForm(id,ty,dc){const e=S.yt.find(x=>x.id==id)||{ty:ty||'f',dc};form(id?'Edit field team member':'Add field team member',[{k:'n',l:'Full name',v:e.n},{k:'ty',l:'Role',t:'select',o:Object.entries(YT),v:e.ty},{k:'dc',l:'District',t:'select',o:DC.map(x=>[x,x]),v:e.dc},{k:'desk',l:'Service desk (optional)',t:'select',o:[['','None']].concat(SD.map(x=>[x,x])),v:e.desk},{k:'ph',l:'Phone',v:e.ph}],v=>{if(!YW())return 'Your role cannot manage the Yas/Mixx team';if(!v.n)return 'Name is required';const o=Object.assign({},v,{id:e.id||bid('T')});if(id)S.yt[S.yt.findIndex(x=>x.id==id)]=o;else S.yt.push(o)})}
+function yaForm(){if(!S.yt.length)return alert('Add a field team member first.');form('Record field activity',[{k:'d',l:'Date',t:'date',v:S.asat},{k:'who',l:'Team member',t:'select',o:S.yt.map(x=>[x.id,x.n+' – '+YT[x.ty]+' – '+x.dc])},{k:'ag',l:'Agents served / serviced / newly registered (number)',t:'number'},{k:'amt',l:'Float amount distributed (TZS, float distribution only)',t:'number'},{k:'n',l:'Note'}],v=>{const m=S.yt.find(x=>x.id==v.who);if(!YW())return 'Your role cannot record field activity';if(!v.d||!(+v.ag>0))return 'Date and number of agents are required';S.ya.push({id:bid('Y'),d:v.d,who:m.id,ty:m.ty,dc:m.dc,ag:+v.ag,amt:+v.amt||0,n:v.n,by:ME})})}
+function paForm(){const sv=S.yt.filter(x=>x.ty=='s');form('Add priority unserved agent ('+lm(S.asat)+')',[{k:'dc',l:'District',t:'select',o:DC.map(x=>[x,x])},{k:'nm',l:'Agent / outlet name'},{k:'no',l:'Agent / till number'},{k:'ph',l:'Phone'},{k:'rs',l:'Reason unserved'},{k:'who',l:'Assigned servicing officer',t:'select',o:[['','Not assigned']].concat(sv.map(x=>[x.id,x.n+' – '+x.dc]))}],v=>{if(!YW())return 'Your role cannot add priority agents';if(!v.nm)return 'Agent name is required';S.pa.push({id:bid('A'),dc:v.dc,nm:v.nm,no:v.no,ph:v.ph,rs:v.rs,who:v.who,mo:lm(S.asat),st:'Unserved'})})}
+function paServe(id){const a=S.pa.find(x=>x.id==id);if(!YW()||!a)return;a.st='Served';a.sd=S.asat;save();render()}
+function sdForm(){form('Service desk daily log',[{k:'d',l:'Date',t:'date',v:S.asat},{k:'desk',l:'Service desk',t:'select',o:SD.map(x=>[x,x])},{k:'cu',l:'Customers / agents served',t:'number'},{k:'rg',l:'New Wakala / agent registrations completed',t:'number'},{k:'is',l:'Issues resolved',t:'number'},{k:'pd',l:'Issues still pending',t:'number'},{k:'n',l:'Note'}],v=>{if(!YW())return 'Your role cannot log service desk activity';if(!v.d||['cu','rg','is','pd'].every(k=>v[k]===''))return 'Date and at least one figure are required';S.sdl.push({id:bid('D'),d:v.d,desk:v.desk,cu:+v.cu||0,rg:+v.rg||0,is:+v.is||0,pd:+v.pd||0,n:v.n,by:ME})})}
+let PD='all';
+const act=(l,ty)=>l.filter(x=>x.ty==ty),dels=(k,x)=>x&&YW()?`<button class="s d" onclick="del('${k}','${x}')">Delete</button>`:'';
+function ytSum(f,t){const l=ya(f,t),b=x=>'<b>'+fmt(x)+'</b>',F=act(l,'f'),Sv=act(l,'s'),Rc=act(l,'r');return `<div class="grid">${kpi('Agents served with float',fmt(sk(F,'ag')),'float distribution')+kpi('Float distributed (TZS)',fmt(sk(F,'amt')),'in period')+kpi('Wakala serviced',fmt(sk(Sv,'ag')),'servicing visits')+kpi('New agents registered',fmt(sk(Rc,'ag')),'recruitment · target 215')}</div><div class="card"><h3>Performance by team member</h3>${tbl(['Name','Role','District','Service desk','Agents','Float (TZS)','Entries'],S.yt.map(m=>{const z=l.filter(x=>x.who==m.id);return[esc(m.n),YT[m.ty],m.dc,m.desk||'—',fmt(sk(z,'ag')),m.ty=='f'?fmt(sk(z,'amt')):'—',z.length]}))}</div><div class="card"><h3>By district</h3>${tbl(['District','Float: agents','Float (TZS)','Wakala serviced','New registrations'],DC.map(d=>[d,fmt(sk(F.filter(x=>x.dc==d),'ag')),fmt(sk(F.filter(x=>x.dc==d),'amt')),fmt(sk(Sv.filter(x=>x.dc==d),'ag')),fmt(sk(Rc.filter(x=>x.dc==d),'ag'))]).concat([['<b>Total</b>',b(sk(F,'ag')),b(sk(F,'amt')),b(sk(Sv,'ag')),b(sk(Rc,'ag'))]]))}</div>`}
+const yaLed=(l,x)=>`<div class="card"><h3>Field activity entries</h3>${tbl(['Date','Team member','Role','District','Agents','Float (TZS)','Note',''],l.slice().sort((a,c)=>a.d<c.d?1:-1).map(e=>[e.d,esc(yn(e.who)),YT[e.ty],e.dc,fmt(e.ag),e.ty=='f'?fmt(e.amt):'—',esc(e.n),dels('ya',x&&e.id)]))}</div>`;
+P.ytm=()=>yOnly(`<div class="sbt noprint">${yBtn('+ Add team member','ytForm()')+yBtn('+ Record activity','yaForm()')}</div><div class="card"><h3>Field team coverage by district</h3>${tbl(['District'].concat(Object.values(YT)),DC.map(d=>[d].concat(Object.keys(YT).map(t=>{const z=S.yt.filter(x=>x.dc==d&&x.ty==t);return (z.length?z.map(x=>esc(x.n)).join(', '):'<span class="o">None assigned</span>')+(YW()?` <button class="s" onclick="ytForm('','${t}','${d}')">+ Assign</button>`:'')}))))}</div><div class="card"><h3>Team members</h3>${tbl(['Name','Role','District','Service desk','Phone',''],S.yt.map(x=>[esc(x.n),YT[x.ty],x.dc,x.desk||'—',esc(x.ph),YW()?`<button class="s" onclick="ytForm('${x.id}')">Edit</button> <button class="s d" onclick="del('yt','${x.id}')">Delete</button>`:'']))}</div>`+perBar()+head('Yas/Mixx field team activity',GP.f,GP.t)+ytSum(GP.f,GP.t)+yaLed(ya(GP.f,GP.t),1));
+function paSum(){const m=lm(S.asat),l=S.pa.filter(x=>x.mo==m),b=x=>'<b>'+fmt(x)+'</b>',n=(d,s)=>l.filter(x=>x.dc==d&&(!s||x.st==s)).length,sv=l.filter(x=>x.st=='Served').length;return `<div class="grid">${kpi('Priority agents unserved in '+m,fmt(l.length),'register total · baseline 324')+kpi('Served since',fmt(sv),'marked served')+kpi('Still unserved',fmt(l.length-sv),'follow up')}</div><div class="card"><h3>Priority unserved agents – ${m}, by district</h3>${tbl(['District','Listed','Served','Still unserved','% served'],DC.map(d=>[d,n(d),n(d,'Served'),n(d)-n(d,'Served'),n(d)?Math.round(n(d,'Served')/n(d)*100)+'%':'—']).concat([['<b>Total</b>',b(l.length),b(sv),b(l.length-sv),l.length?'<b>'+Math.round(sv/l.length*100)+'%</b>':'—']]))}</div>`}
+const paLed=x=>{const l=S.pa.filter(a=>a.mo==lm(S.asat)&&(PD=='all'||a.dc==PD));return `<div class="card"><h3>Priority agent register – ${lm(S.asat)}</h3><label class="noprint">District <select onchange="PD=this.value;render()">${['all'].concat(DC).map(d=>`<option ${d==PD?'selected':''}>${d}</option>`).join('')}</select></label>${tbl(['District','Agent / outlet','Number','Phone','Reason','Servicing officer','Status',''],l.map(a=>[a.dc,esc(a.nm),esc(a.no),esc(a.ph),esc(a.rs),a.who?esc(yn(a.who)):'—',a.st=='Served'?`<span class="tag g">Served ${a.sd||''}</span>`:'<span class="tag o">Unserved</span>',x&&YW()?(a.st=='Served'?'':`<button class="s p" onclick="paServe('${a.id}')">Mark served</button> `)+dels('pa',a.id):'']))}</div>`};
+P.pua=()=>yOnly(`<div class="sbt noprint">${yBtn('+ Add priority agent','paForm()')}</div><div class="f">Priority agents who were not served last month, in every Tabora district. Upload long lists from the Bulk Upload tab. Mark each agent served once float or servicing is delivered.</div>`+paSum()+paLed(1));
+function sdSum(f,t){const l=sdl(f,t),b=x=>'<b>'+fmt(x)+'</b>';return `<div class="card"><h3>Service desk performance</h3>${tbl(['Service desk','Staff assigned','Customers served','Registrations','Issues resolved','Issues pending (latest)'],SD.map(d=>{const z=l.filter(x=>x.desk==d).sort((a,c)=>a.d<c.d?1:-1),st=S.yt.filter(x=>x.desk==d);return[d,st.length?st.map(x=>esc(x.n)).join(', '):'<span class="o">None assigned</span>',fmt(sk(z,'cu')),fmt(sk(z,'rg')),fmt(sk(z,'is')),z.length?fmt(z[0].pd):'—']}).concat([['<b>Total</b>','',b(sk(l,'cu')),b(sk(l,'rg')),b(sk(l,'is')),'']]))}</div>`}
+const sdLed=(l,x)=>`<div class="card"><h3>Service desk log</h3>${tbl(['Date','Desk','Customers','Registrations','Resolved','Pending','Note','By',''],l.slice().sort((a,c)=>a.d<c.d?1:-1).map(e=>[e.d,e.desk,fmt(e.cu),fmt(e.rg),fmt(e.is),fmt(e.pd),esc(e.n),R[e.by]||'',dels('sdl',x&&e.id)]))}</div>`;
+P.sdk=()=>yOnly(`<div class="sbt noprint">${yBtn('+ Daily desk log','sdForm()')}</div>`+perBar()+head('Yas/Mixx service desks – Tabora, Nzega, Igunga, Nkinga',GP.f,GP.t)+sdSum(GP.f,GP.t)+sdLed(sdl(GP.f,GP.t),1));
+Object.assign(RN,{ytm:'Yas/Mixx field team activity',pua:'Priority unserved agents (last month)',sdk:'Service desks performance'});
+Object.assign(Rb,{ytm:()=>ytSum(RP.f,RP.t)+yaLed(ya(RP.f,RP.t),0),pua:()=>paSum()+paLed(0),sdk:()=>sdSum(RP.f,RP.t)+sdLed(sdl(RP.f,RP.t),0)});
+RA.ytm=RA.pua=RA.sdk=['ymm','wdm','md','gfm','trc','ia'];
+BK.pua={n:'Priority unserved agents (last month)',h:['district','agent','number','phone','reason'],x:['Igunga','Duka la Juma','A1001','0712000000','No float visit'],add:r=>{if(!YW())return 'only Yas/Mixx Manager, WDM or MD can import';const d=dcm(r.district);if(!d||!r.agent)return 'district or agent invalid';S.pa.push({id:bid('A'),dc:d,nm:r.agent,no:r.number,ph:r.phone,rs:r.reason,who:'',mo:lm(S.asat),st:'Unserved'})}};
+BK.yt={n:'Yas/Mixx field team',h:['name','role','district','desk','phone'],x:['Asha Juma','Float','Tabora','Tabora','0713000000'],add:r=>{if(!YW())return 'only Yas/Mixx Manager, WDM or MD can import';const d=dcm(r.district),t=/^f/i.test(r.role)?'f':/^s/i.test(r.role)?'s':/^r/i.test(r.role)?'r':null,k=SD.find(x=>nz(x)==nz(r.desk))||'';if(!r.name||!d||!t)return 'name, district or role (Float / Servicing / Recruitment) invalid';S.yt.push({id:bid('T'),n:r.name,ty:t,dc:d,desk:k,ph:r.phone})}};
+TABS.splice(1,0,['flt','Float Movements'],['ytm','Yas/Mixx Field Team'],['pua','Priority Unserved'],['sdk','Service Desks']);
+TR.flt=TR.ytm=TR.pua=TR.sdk=['ymm','wdm','md','gfm','trc','ia'];
+Object.assign(SW,{'Yas/Mixx Field Team':'Timu ya Uwandani ya Yas/Mixx','Priority Unserved':'Wasiohudumiwa wa Kipaumbele','Service Desks':'Madawati ya Huduma','Float distribution':'Ugawaji wa float','Wakala servicing':'Kuhudumia Wakala','Wakala recruitment':'Usajili wa Wakala wapya','Unserved':'Hajahudumiwa','Mark served':'Weka amehudumiwa','+ Add team member':'+ Ongeza mshiriki wa timu','+ Record activity':'+ Rekodi shughuli','+ Add priority agent':'+ Ongeza wakala wa kipaumbele','+ Daily desk log':'+ Rekodi ya siku ya dawati','Service desk performance':'Utendaji wa madawati ya huduma','Service desk log':'Rekodi za dawati la huduma','Team members':'Wanatimu','Performance by team member':'Utendaji kwa mwanatimu','Priority agents unserved':'Mawakala wa kipaumbele wasiohudumiwa'});
+
+
+/* Float Movements = overview fed by field activity + priority register (single source of truth) */
+if(!S.v4){(S.fl||[]).forEach(e=>{if(e.ag||e.amt)S.ya.push({id:'Y'+e.id,d:e.d,who:'',ty:'f',dc:e.dc,ag:e.ag,amt:e.amt,n:(e.n?e.n+' ':'')+'(migrated daily return)',by:e.by});if(e.nr)S.ya.push({id:'Yr'+e.id,d:e.d,who:'',ty:'r',dc:e.dc,ag:e.nr,amt:0,n:'(migrated daily return)',by:e.by})});S.v4=1}
+function ovSum(f,t){const l=ya(f,t),F=act(l,'f'),Sv=act(l,'s'),Rc=act(l,'r'),m=lm(S.asat),un=S.pa.filter(x=>x.mo==m&&x.st!='Served'),b=x=>'<b>'+fmt(x)+'</b>',days=[...new Set(l.map(x=>x.d))].sort(),pu=d=>un.filter(x=>x.dc==d).length;
+return `<div class="grid">${kpi('Agents served with float',fmt(sk(F,'ag')),'number of agents, in period')+kpi('Float served (TZS)',fmt(sk(F,'amt')),'amount served')+kpi('Priority agents unserved',fmt(un.length),m+' register · baseline 324')+kpi('New Mixx by Yas agents',fmt(sk(Rc,'ag')),'recruitment · target 215')}</div><div class="card"><h3>Agents &amp; float served per day</h3>${tbl(['Date','Agents served with float','Float served (TZS)','Wakala serviced','New agents registered'],days.map(d=>{const z=l.filter(e=>e.d==d);return[d,fmt(sk(act(z,'f'),'ag')),fmt(sk(act(z,'f'),'amt')),fmt(sk(act(z,'s'),'ag')),fmt(sk(act(z,'r'),'ag'))]}).concat(days.length?[['<b>Total</b>',b(sk(F,'ag')),b(sk(F,'amt')),b(sk(Sv,'ag')),b(sk(Rc,'ag'))]]:[]))}</div><div class="card"><h3>By district – with priority agents still unserved</h3>${tbl(['District','Agents served with float','Float served (TZS)','New agents registered','Priority unserved (still)'],DC.map(d=>[d,fmt(sk(F.filter(e=>e.dc==d),'ag')),fmt(sk(F.filter(e=>e.dc==d),'amt')),fmt(sk(Rc.filter(e=>e.dc==d),'ag')),pu(d)?'<span class="tag o">'+pu(d)+'</span>':'0']).concat([['<b>Total</b>',b(sk(F,'ag')),b(sk(F,'amt')),b(sk(Rc,'ag')),b(un.length)]]))}</div>`}
+P.flt=()=>yOnly(`<div class="sbt noprint">${yBtn('+ Record field activity','yaForm()')}${yBtn('+ Add priority agent','paForm()')}${yBtn('+ Daily desk log','sdForm()')}</div><div class="f">Every figure here comes from <b>Field Team</b> activity entries and the <b>Priority Unserved</b> register – enter data once there and it appears on this overview, the dashboard and Reports.</div>`+perBar()+head('Float movements – agents served, amount served, priority unserved &amp; recruitment',GP.f,GP.t)+ovSum(GP.f,GP.t));
+Rb.flt=()=>ovSum(RP.f,RP.t);RN.flt='Float movements overview';RA.flt=['ymm','wdm','md','gfm','trc','ia'];
+const bk0=P.bulk;P.bulk=()=>{if(ME!='ymm')return bk0();const keep=['pua','yt','ret'],sv={};Object.keys(BK).forEach(k=>{if(!keep.includes(k)){sv[k]=BK[k];delete BK[k]}});if(!BK[BS.t])BS.t='pua';try{return bk0()}finally{Object.assign(BK,sv)}};
+function exp(){S.ver=4;const a=document.createElement('a');a.href='data:application/json,'+encodeURIComponent(JSON.stringify(S));a.download='gas_yasmixx_v4_data_'+S.asat+'.json';document.body.appendChild(a);a.click();a.remove()}
+S.ver=4;
+/* seed: one Route and one Shop sales person per district (editable placeholders) */
+DC.forEach(d=>['r','s'].forEach(t=>{if(!S.spu.some(x=>x.dc==d&&x.ty==t))S.spu.push({id:'U-'+nz(d)+t,n:(t=='r'?'Route Sales – ':'Shop Sales – ')+d,ty:t,u:'g',dc:d,ph:''})}));save();
+/* shell */
+TABS.splice(1,0,['sales','Sales'],['team','Sales Team']);TR.team=NZ;
+$('.bar').insertAdjacentHTML('beforeend','<label id="spw" style="display:none">Sales person <select id="sp"></select></label>');$('#sp').onchange=e=>{SPID=e.target.value;render()};
+function spSel(){$('#spw').style.display=isSP()?'':'none';if(!isSP())return;const l=S.spu.filter(x=>x.ty==(ME=='rsp'?'r':'s'));if(!l.some(x=>x.id==SPID))SPID=l[0]?l[0].id:'';$('#sp').innerHTML=l.map(x=>`<option value="${x.id}">${esc(x.n)} – ${x.dc}</option>`).join('')||'<option>None added yet</option>';$('#sp').value=SPID}
+let LK='';
+function render(){spSel();if(ME=='ymm'){if(UN!='y')LK=UN;UN='y'}else if(LK){UN=LK;LK=''}$('#un').value=UN;$('#un').disabled=ME=='ymm';let t=TABS.filter(x=>!TR[x[0]]||TR[x[0]].includes(ME));if(isSP())t=t.filter(x=>['dash','sales','rep','dr','bulk'].includes(x[0]));if(ME=='ymm')t=t.filter(x=>!['sales','team','ctl','mst','inv'].includes(x[0]));if(!t.some(x=>x[0]==PG))PG='dash';$('#nav').innerHTML=t.map(x=>`<button class="${PG==x[0]?'on':''}" onclick="PG='${x[0]}';render()">${x[1]}</button>`).join('');$('#main').innerHTML=P[PG]()+(PG=='rep'||PG=='sales'?'':'<div class="noprint"><button onclick="window.print()">🖨 Print this page</button></div>')}
+$('#me').innerHTML=Object.entries(R).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('#me').value=ME;
+$('#as').onchange=e=>{S.asat=e.target.value||S.asat;save();if(GP.k!='c')gp(GP.k);render()};
+Object.assign(SW,{'Sales':'Mauzo','Sales Team':'Timu ya Mauzo','Route Sales Person':'Muuzaji wa Njiani','Shop Sales Person':'Muuzaji wa Duka','Opening balance':'Salio la mwanzo','Added goods':'Bidhaa zilizoongezwa','Available goods':'Bidhaa zilizopo','Remaining balance':'Salio lililobaki','Stockist price':'Bei ya Stokisti','Route price':'Bei ya Njiani','+ Post sale':'+ Rekodi mauzo','Stock Control':'Udhibiti wa Stoo','Main Stores':'Maghala Makuu','Float Movements':'Mienendo ya Float','Agents served':'Mawakala waliohudumiwa','Receive stock':'Pokea bidhaa','Return stock':'Rejesha bidhaa','Transfer / issue stock':'Hamisha / toa bidhaa','Sales records':'Rekodi za mauzo','Procurement Officer':'Afisa Manunuzi','Sold':'Zilizouzwa','Remaining':'Zilizobaki','Available':'Zilizopo','Added':'Zilizoongezwa','Opening':'Mwanzo'});
+save();render();tw();
+</script>
+<script type="text/plain" data-app>
+/* ===== Daily report template: available to every user ===== */
+S.dr=S.dr||[];let DRB=0;
+const dUn=()=>['ymm','wdm'].includes(ME)?'y':['rgm','rsp','ssp','po'].includes(ME)?'g':'b',dPn=()=>isSP()&&me()?me().n:'',own=r=>r.by==ME&&r.pn==dPn(),
+dSee=r=>isM()||ME=='ia'||own(r)||(ME=='rgm'&&r.u!='y')||(['ymm','wdm'].includes(ME)&&r.u!='g'),
+dLoc=['Tabora HQ'].concat(DC,SD.map(x=>'Service desk – '+x)),dUL={g:'Taifa Gas',y:'Yas & Mixx',b:'Shared / head office'};
+function drForm(){form('Daily report',[{k:'d',l:'Date',t:'date',v:S.asat},{k:'u',l:'Unit',t:'select',o:Object.entries(dUL),v:dUn()},{k:'loc',l:'Location',t:'select',o:dLoc.map(x=>[x,x])},{k:'done',l:'Work completed today',t:'textarea'},{k:'kl',l:'Key figure name (e.g. cylinders sold, float served, entries posted)'},{k:'kv',l:'Key figure value',t:'number'},{k:'iss',l:'Issues / support needed',t:'textarea'},{k:'nxt',l:'Plan for tomorrow',t:'textarea'}],v=>{if(!v.d||!v.done)return 'Date and work completed are required';S.dr.push({id:bid('G'),d:v.d,by:ME,pn:dPn(),u:v.u,loc:v.loc,done:v.done,kl:v.kl,kv:v.kv===''?'':+v.kv,iss:v.iss,nxt:v.nxt,rv:''})})}
+function drRv(id){const r=S.dr.find(x=>x.id==id);if(r&&dSee(r)&&!own(r)){r.rv=R[ME]+' '+S.asat;save();render()}}
+function drDel(id){const r=S.dr.find(x=>x.id==id);if(r&&(own(r)||ME=='md')&&confirm('Delete this daily report?')){S.dr=S.dr.filter(x=>x.id!=id);save();render()}}
+const wr=s=>`<span style="white-space:normal">${esc(s)}</span>`;
+function drTab(f,t,x){const l=S.dr.filter(r=>r.d>=f&&r.d<=t&&dSee(r)&&vis(r.u)).sort((a,c)=>a.d<c.d?1:-1);return `<div class="card"><h3>Daily reports (${l.length})</h3>${tbl(['Date','By','Unit','Location','Work completed','Key figure','Issues / support','Plan for tomorrow','Review',''],l.map(r=>[r.d,R[r.by]+(r.pn?' – '+esc(r.pn):''),dUL[r.u],esc(r.loc),wr(r.done),r.kl||r.kv!==''?esc(r.kl)+': '+fmt(r.kv):'—',wr(r.iss),wr(r.nxt),r.rv?`<span class="tag g">${esc(r.rv)}</span>`:'<span class="tag o">Not reviewed</span>',x?(dSee(r)&&!own(r)&&!r.rv?`<button class="s p" onclick="drRv('${r.id}')">Mark reviewed</button> `:'')+((own(r)||ME=='md')?`<button class="s d" onclick="drDel('${r.id}')">Delete</button>`:''):'']))}</div>`}
+const drBlank=()=>{const ln=(l,w)=>`<p style="margin:14px 0">${l}: <span style="display:inline-block;border-bottom:1px solid #000;width:${w}%">&nbsp;</span></p>`,bx=l=>`<p style="margin:14px 0 4px"><b>${l}</b></p>`+'<div style="border-bottom:1px solid #000;height:26px"></div>'.repeat(3);return `<div class="sbt noprint"><button class="p" onclick="window.print()">🖨 Print blank template</button> <button onclick="DRB=0;render()">← Back</button></div><div class="card"><h2 style="margin:0">Taifa Gas &amp; Yas/Mixx – Tabora</h2><h3>Daily Report</h3>${ln('Name',50)+ln('Role / position',40)+ln('Date',25)+ln('Unit (Gas / Yas &amp; Mixx / Shared)',30)+ln('Location (district / service desk / HQ)',30)+bx('Work completed today')+ln('Key figure (name and value)',45)+bx('Issues / support needed')+bx('Plan for tomorrow')+ln('Signature',30)+ln('Reviewed by',30)}</div>`};
+P.dr=()=>{if(DRB)return drBlank();const miss=isM()||ME=='ia'?Object.keys(R).filter(k=>!S.dr.some(r=>r.d==S.asat&&r.by==k)):[];return `<div class="sbt noprint"><button class="p" onclick="drForm()">+ New daily report</button> <button onclick="DRB=1;render()">Print blank template</button></div><div class="f">Every user submits a daily report. You see your own reports; managers also see reports for their unit and can mark them reviewed.</div>`+(isM()||ME=='ia'?`<div class="card"><h3>No daily report on ${S.asat}</h3><p class="note">${miss.length?miss.map(k=>R[k]).join(', '):'All roles have reported.'}</p></div>`:'')+perBar()+head('Daily reports',GP.f,GP.t)+drTab(GP.f,GP.t,1)};
+Object.assign(RN,{dr:'Daily reports'});Rb.dr=()=>drTab(RP.f,RP.t,0);RA.dr=Object.keys(R);
+BK.dr={n:'Daily reports',h:['date','unit','location','work','keyfigure','keyvalue','issues','plan'],x:['2026-11-14','Gas','Igunga','Delivered 120 cylinders','Cylinders sold',120,'None','Restock'],add:r=>{if(!dtOk(r.date)||!r.work)return 'date (YYYY-MM-DD) or work completed missing';S.dr.push({id:bid('G'),d:r.date,by:ME,pn:dPn(),u:un(r.unit)||'b',loc:r.location,done:r.work,kl:r.keyfigure,kv:r.keyvalue===''?'':num(r.keyvalue),iss:r.issues,nxt:r.plan,rv:''})}};
+TABS.splice(1,0,['dr','Daily Report']);
+const d3=P.dash;P.dash=()=>d3()+`<div class="sbt noprint"><button class="p" onclick="PG='dr';render();drForm()">+ Submit today's daily report</button> <span class="note">${S.dr.filter(r=>own(r)&&r.d==S.asat).length?'You have reported for '+S.asat:'No report from you yet for '+S.asat}</span></div>`;
+Object.assign(SW,{'Daily Report':'Ripoti ya Siku','+ New daily report':'+ Ripoti mpya ya siku','Print blank template':'Chapisha kiolezo tupu','Daily report':'Ripoti ya siku','Work completed today':'Kazi iliyokamilika leo','Key figure value':'Thamani ya kiashiria','Issues / support needed':'Changamoto / msaada unaohitajika','Plan for tomorrow':'Mpango wa kesho','Mark reviewed':'Weka imehakikiwa','Not reviewed':'Haijahakikiwa','Daily reports':'Ripoti za siku','+ Submit today\'s daily report':'+ Wasilisha ripoti ya leo','Location':'Mahali'});
+save();render();tw();
+</script>
+<script type="text/plain" data-app>
+/* ===== Downloadable daily-report template + bulk upload ===== */
+async function dl(name,data){try{const d=window.claude&&await claude.use('downloads');if(d){await d.save({filename:name,data});return}}catch(e){if(e&&e.code=='declined')return}const a=document.createElement('a');a.href=typeof data=='string'?'data:text/plain;charset=utf-8,'+encodeURIComponent(data):URL.createObjectURL(new Blob([data]));a.download=name;document.body.appendChild(a);a.click();a.remove()}
+function exp(){S.ver=4;dl('gas_yasmixx_v4_data_'+S.asat+'.json',JSON.stringify(S))}
+function bkTpl(){const k=BK[BS.t];dl('template_'+BS.t+'.csv','\uFEFF'+k.h.join(',')+'\n'+k.x.join(',')+'\n')}
+const DRH=['date','unit','location','work','keyfigure','keyvalue','issues','plan'],DRX=()=>[S.asat,'Gas','Igunga','EXAMPLE – delete this row','Cylinders sold',120,'None','Restock'],
+csvq=c=>/[",\n]/.test(c)?'"'+String(c).replace(/"/g,'""')+'"':c;
+const drCsv=()=>dl('daily_report_template.csv','\uFEFF'+[DRH,DRX()].map(r=>r.map(csvq).join(',')).join('\n')+'\n');
+async function drXlsx(){try{await xl()}catch(e){return alert(e.message)}const ws=XLSX.utils.aoa_to_sheet([DRH,DRX()]);ws['!cols']=[12,14,26,40,20,12,30,30].map(w=>({wch:w}));const w2=XLSX.utils.aoa_to_sheet([['Column','What to enter'],['date','YYYY-MM-DD, e.g. '+S.asat],['unit','Gas, Yas & Mixx or Shared'],['location','One of: '+dLoc.join(' | ')+' (a bare desk name such as Nkinga is also accepted)'],['work','Work completed today (required)'],['keyfigure','Name of your key figure, e.g. cylinders sold'],['keyvalue','A number'],['issues','Issues / support needed'],['plan','Plan for tomorrow'],['','One row per day. Delete the EXAMPLE row, save as .xlsx or CSV, then upload it on the Daily Report page.']]);w2['!cols']=[{wch:14},{wch:100}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Daily Report');XLSX.utils.book_append_sheet(wb,w2,'Instructions');dl('daily_report_template.xlsx',XLSX.write(wb,{type:'array',bookType:'xlsx'}))}
+BK.dr.x=DRX();BK.dr.add=r=>{if(/^example/i.test(r.work))return 'example row – delete it before uploading';if(!dtOk(r.date)||!r.work)return 'date (YYYY-MM-DD) or work completed missing';const u=/^(b|shared|hq)/i.test(r.unit)?'b':un(r.unit),lo=/^hq$/i.test(r.location)?'Tabora HQ':dLoc.find(x=>nz(x)==nz(r.location))||(SD.some(x=>nz(x)==nz(r.location))?'Service desk – '+SD.find(x=>nz(x)==nz(r.location)):'');if(!u)return 'unit must be Gas, Yas & Mixx or Shared';if(!lo)return 'location not recognised (see Instructions sheet)';if(r.keyvalue!==''&&isNaN(num(r.keyvalue)))return 'keyvalue must be a number';S.dr.push({id:bid('G'),d:r.date,by:ME,pn:dPn(),u,loc:lo,done:r.work,kl:r.keyfigure,kv:r.keyvalue===''?'':num(r.keyvalue),iss:r.issues,nxt:r.plan,rv:''})};
+async function drUp(inp){BS.t='dr';await bkRun(inp);PG='dr';render()}
+const dr0=P.dr;P.dr=()=>{const h=dr0();if(DRB)return h;return `<div class="card noprint"><h3>Download template → fill in → upload</h3><div class="f">1. Download the template (Excel or CSV). 2. Add one row per day and delete the EXAMPLE row. 3. Upload the filled file – rows are checked and bad rows are rejected with a reason. You can upload several files at once.</div><button class="p" onclick="drXlsx()">⬇ Excel template (.xlsx)</button> <button onclick="drCsv()">⬇ CSV template</button> <label style="margin-left:8px">Upload filled template <input type="file" multiple accept=".csv,.xlsx,.xls" onchange="drUp(this)"></label>${BS.t=='dr'&&BS.log?`<pre style="white-space:pre-wrap;margin:10px 0 0">${esc(BS.log)}</pre>`:''}</div>`+h};
+Object.assign(SW,{'Download template → fill in → upload':'Pakua kiolezo → jaza → pakia','Upload filled template':'Pakia kiolezo kilichojazwa','⬇ Excel template (.xlsx)':'⬇ Kiolezo cha Excel (.xlsx)','⬇ CSV template':'⬇ Kiolezo cha CSV'});
+save();render();tw();
+</script>
+<script type="text/plain" data-post>/* Runs after the original app: binds the screen to the signed-in user (role comes from Supabase memberships). */
+(function () {
+  const u = TG.user;
+  const ph = id => document.getElementById(id);
+  ME = u.role;
+  S.asat = new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10);   // today, East Africa Time
+  ph('as').value = S.asat;
+  ph('me').value = ME; ph('me').parentElement.style.display = 'none';
+
+  document.querySelector('.bar').insertAdjacentHTML('beforeend',
+    '<span style="font-weight:600">' + esc(u.email) + '</span> <span class="note" style="color:#9bb7cc">(' + esc(R[u.role]) + ')</span> ' +
+    '<span id="sync" style="font-size:12px"></span> <button class="s" id="tglo">Sign out</button>');
+  ph('tglo').onclick = () => TG.signOut();
+
+  // closing a popup shows any update that arrived while it was open
+  const _form = form;
+  form = function () { _form.apply(null, arguments); const c = ph('fc'); if (c) { const o = c.onclick; c.onclick = () => { o(); window.__AFTER_MODAL(); }; } };
+
+  // erase-all is not available on a shared live system; restore only adds records
+  rst = function () { alert('Erasing data is disabled in the live system. Ask the administrator to restore from a database backup.'); };
+  imp = function (i) {
+    const f = i.files[0]; if (!f) return;
+    if (u.role !== 'md') { alert('Only the Managing Director can import data.'); i.value = ''; return; }
+    const r = new FileReader();
+    r.onload = () => { try { const n = TG.mergeIn(JSON.parse(r.result)); save(); render(); alert(n + ' records added. Existing records were not changed.'); } catch (e) { alert('Not a valid data file'); } i.value = ''; };
+    r.readAsText(f);
+  };
+
+  // work saved on this device while offline is added back (never overwrites)
+  try {
+    const raw = localStorage.getItem('gym_unsynced');
+    if (raw) { const d = JSON.parse(raw); if (d.u === u.email) { const n = TG.mergeIn(d.d); if (n) TG.toast(n + ' entries saved offline were restored and are being uploaded.'); } localStorage.removeItem('gym_unsynced'); }
+  } catch (e) {}
+
+  save(); render(); if (typeof tw == 'function') tw();
+})();
+</script>
+</body></html>
